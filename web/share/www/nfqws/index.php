@@ -4,14 +4,15 @@ ini_set('memory_limit', '32M');
 
 // TODO: Проверить что nfqws вообще установлен
 
-define('NFQWS2', file_exists('/opt/usr/bin/nfqws2') || file_exists('/usr/bin/nfqws2') ? true : false);
-define('ROOT_DIR', file_exists('/opt/usr/bin/nfqws2') || file_exists('/opt/usr/bin/nfqws') ? '/opt' : '');
-define('SCRIPT_NAME', ROOT_DIR ? (NFQWS2 ? 'S51nfqws' : 'S51nfqws2') : (NFQWS2 ? 'nfqws2-keenetic' : 'nfqws-keenetic'));
-define('CONF_DIR', NFQWS2 ? '/etc/nfqws2' : '/etc/nfqws');
-define('LISTS_DIR', NFQWS2 ? '/etc/nfqws2/lists' : '/etc/nfqws');
-define('LOG_FILE', NFQWS2 ? '/var/log/nfqws2.log' : '/var/log/nfqws.log');
+define('NFQWS2', file_exists('/opt/usr/bin/nfqws2') || file_exists('/usr/bin/nfqws2'));
+define('ROOT_DIR', (file_exists('/opt/usr/bin/nfqws2') || file_exists('/opt/usr/bin/nfqws')) ? '/opt' : '');
+const SCRIPT_NAME = ROOT_DIR ? (NFQWS2 ? 'S51nfqws2' : 'S51nfqws') : (NFQWS2 ? 'nfqws2-keenetic' : 'nfqws-keenetic');
+const CONF_DIR = NFQWS2 ? '/etc/nfqws2' : '/etc/nfqws';
+const LISTS_DIR = NFQWS2 ? '/etc/nfqws2/lists' : '/etc/nfqws';
+const LOG_FILE = NFQWS2 ? '/var/log/nfqws2.log' : '/var/log/nfqws.log';
 
-function normalizeString(string $s): string {
+function normalizeString(string $s): string
+{
     // Convert all line-endings to UNIX format.
     $s = str_replace(array("\r\n", "\r", "\n"), "\n", $s);
 
@@ -26,17 +27,18 @@ function normalizeString(string $s): string {
     return $s;
 }
 
-function getFiles(): array {
+function getFiles(): array
+{
     // GLOB_BRACE is unsupported in openwrt
     $lists = array_filter(glob(ROOT_DIR . LISTS_DIR . '/*'), function ($file) {
         return is_file($file) && preg_match('/\.(list|list-opkg|list-old)$/i', $file);
     });
-    $baseLists = array_map(fn($file) => basename($file), $files);
+    $baseLists = array_map(fn($file) => basename($file), $lists);
 
     $confs = array_filter(glob(ROOT_DIR . CONF_DIR . '/*'), function ($file) {
         return is_file($file) && preg_match('/\.(conf|conf-opkg|conf-old|apk-new)$/i', $file);
     });
-    $baseConfs = array_map(fn($file) => basename($file), $files);
+    $baseConfs = array_map(fn($file) => basename($file), $confs);
 
     $result = array_merge($baseLists, $baseConfs);
 
@@ -60,34 +62,36 @@ function getFiles(): array {
     return $result;
 }
 
-function getFileContent(string $filename): string {
+function getFileContent(string $filename): string
+{
     if (preg_match('/\.(list|list-opkg|list-old)$/i', $filename)) {
         return file_get_contents(ROOT_DIR . LISTS_DIR . '/' . basename($filename));
     }
     return file_get_contents(ROOT_DIR . CONF_DIR . '/' . basename($filename));
 }
 
-function getLogContent(): string {
+function getLogContent(): string
+{
     $file = file(ROOT_DIR . LOG_FILE);
     $file = array_reverse($file);
     return implode("", $file);
 }
 
-function saveFile(string $filename, string $content) {
+function saveFile(string $filename, string $content): bool
+{
     $filename = basename($filename);
     if (preg_match('/\.(list|list-opkg|list-old)$/i', $filename)) {
         $file = ROOT_DIR . LISTS_DIR . '/' . $filename;
+    } elseif (preg_match('/\.(log)$/i', $filename)) {
+        $file = ROOT_DIR . LOG_FILE;
     } else {
         $file = ROOT_DIR . CONF_DIR . '/' . $filename;
     }
     return file_exists($file) && file_put_contents($file, normalizeString($content)) !== false;
 }
 
-function saveLog(string $filename, string $content) {
-    return saveFile($filename, $content, ROOT_DIR . LOG_FILE);
-}
-
-function removeFile(string $filename) {
+function removeFile(string $filename): bool
+{
     $filename = basename($filename);
     if (preg_match('/\.(list|list-opkg|list-old)$/i', $filename)) {
         $file = ROOT_DIR . LISTS_DIR . '/' . $filename;
@@ -101,20 +105,23 @@ function removeFile(string $filename) {
     }
 }
 
-function nfqwsServiceStatus() {
+function nfqwsServiceStatus(): bool
+{
     $output = null;
     exec(ROOT_DIR . "/etc/init.d/" . SCRIPT_NAME . " status", $output);
     return str_contains($output[0] ?? '', 'is running');
 }
 
-function nfqwsServiceAction(string $action) {
+function nfqwsServiceAction(string $action): array
+{
     $output = null;
     $retval = null;
     exec(ROOT_DIR . "/etc/init.d/" . SCRIPT_NAME . " $action", $output, $retval);
     return array('output' => $output, 'status' => $retval);
 }
 
-function opkgUpgradeAction() {
+function opkgUpgradeAction(): array
+{
     $output = null;
     $retval = null;
     if (NFQWS2) {
@@ -128,7 +135,8 @@ function opkgUpgradeAction() {
     return array('output' => $output, 'status' => $retval);
 }
 
-function apkUpgradeAction() {
+function apkUpgradeAction(): array
+{
     $output = null;
     $retval = null;
     if (NFQWS2) {
@@ -142,11 +150,13 @@ function apkUpgradeAction() {
     return array('output' => $output, 'status' => $retval);
 }
 
-function upgradeAction() {
+function upgradeAction(): array
+{
     return file_exists('/usr/bin/apk') ? apkUpgradeAction() : opkgUpgradeAction();
 }
 
-function authenticate($username, $password) {
+function authenticate($username, $password): bool
+{
     $passwdFile = ROOT_DIR . '/etc/passwd';
     $shadowFile = ROOT_DIR . '/etc/shadow';
 
@@ -166,7 +176,8 @@ function authenticate($username, $password) {
     return false;
 }
 
-function main() {
+function main(): void
+{
     if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(302);
         header('Location: index.html');
@@ -186,7 +197,7 @@ function main() {
     switch ($_POST['cmd']) {
         case 'filenames':
             $files = getFiles();
-            $response = array('status' => 0, 'files' => $files, 'service' => nfqwsServiceStatus());
+            $response = array('status' => 0, 'files' => $files, 'service' => nfqwsServiceStatus(), 'nfqws2' => NFQWS2);
             break;
 
         case 'filecontent':
@@ -199,11 +210,7 @@ function main() {
             break;
 
         case 'filesave':
-            if (str_ends_with($_POST['filename'], '.log')) {
-                $result = saveLog($_POST['filename'], $_POST['content']);
-            } else {
-                $result = saveFile($_POST['filename'], $_POST['content']);
-            }
+            $result = saveFile($_POST['filename'], $_POST['content']);
             $response = array('status' => $result ? 0 : 1, 'filename' => $_POST['filename']);
             break;
 

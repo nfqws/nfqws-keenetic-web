@@ -330,6 +330,10 @@ class UI {
         }
     }
 
+    setTitle(title) {
+        document.getElementById('nfqws').textContent = title;
+    }
+
     setStatus(status) {
         document.body.classList.toggle('running', status);
     }
@@ -519,6 +523,7 @@ async function serviceAction(action) {
 
 async function getLatestVersion() {
     try {
+        // TODO: get installed version
         const response = await fetch('https://api.github.com/repos/Anonym-tsk/nfqws-keenetic/releases/latest');
         const data = await response.json();
         const tag = data.tag_name;
@@ -544,6 +549,7 @@ ui.version.checkUpdate();
 
 const response = await getFiles();
 ui.setStatus(response.service);
+ui.setTitle(response.nfqws2 ? 'nfqws2-keenetic' : 'nfqws-keenetic');
 
 if (response.files?.length) {
     for (const filename of response.files) {
