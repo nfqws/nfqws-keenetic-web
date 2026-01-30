@@ -120,6 +120,17 @@ function nfqwsServiceAction(string $action): array
     return array('output' => $output, 'status' => $retval);
 }
 
+function nfqwsInstalledVersion(): string
+{
+    $output = null;
+    if (NFQWS2) {
+        exec("opkg status nfqws2-keenetic | awk -F': ' '/^Version:/ {print $2}'", $output);
+    } else {
+        exec("opkg status nfqws-keenetic | awk -F': ' '/^Version:/ {print $2}'", $output);
+    }
+    return $output[0] ?? '';
+}
+
 function opkgUpgradeAction(): array
 {
     $output = null;
@@ -197,7 +208,7 @@ function main(): void
     switch ($_POST['cmd']) {
         case 'filenames':
             $files = getFiles();
-            $response = array('status' => 0, 'files' => $files, 'service' => nfqwsServiceStatus(), 'nfqws2' => NFQWS2);
+            $response = array('status' => 0, 'files' => $files, 'service' => nfqwsServiceStatus(), 'nfqws2' => NFQWS2, 'version' => nfqwsInstalledVersion());
             break;
 
         case 'filecontent':
