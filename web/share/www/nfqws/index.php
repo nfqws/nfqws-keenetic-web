@@ -4,12 +4,12 @@ ini_set('memory_limit', '32M');
 
 // TODO: Проверить что nfqws вообще установлен
 
-define('NFQWS2', file_exists('/opt/usr/bin/nfqws2') || file_exists('/usr/bin/nfqws2') ? true : false)
+define('NFQWS2', file_exists('/opt/usr/bin/nfqws2') || file_exists('/usr/bin/nfqws2') ? true : false);
 define('ROOT_DIR', file_exists('/opt/usr/bin/nfqws2') || file_exists('/opt/usr/bin/nfqws') ? '/opt' : '');
 define('SCRIPT_NAME', ROOT_DIR ? (NFQWS2 ? 'S51nfqws' : 'S51nfqws2') : (NFQWS2 ? 'nfqws2-keenetic' : 'nfqws-keenetic'));
-define('CONF_DIR', NFQWS2 ? '/etc/nfqws2' : '/etc/nfqws')
-define('LISTS_DIR', NFQWS2 ? '/etc/nfqws2/lists' : '/etc/nfqws')
-define('LOG_FILE', NFQWS2 ? '/var/log/nfqws2.log' : '/var/log/nfqws.log')
+define('CONF_DIR', NFQWS2 ? '/etc/nfqws2' : '/etc/nfqws');
+define('LISTS_DIR', NFQWS2 ? '/etc/nfqws2/lists' : '/etc/nfqws');
+define('LOG_FILE', NFQWS2 ? '/var/log/nfqws2.log' : '/var/log/nfqws.log');
 
 function normalizeString(string $s): string {
     // Convert all line-endings to UNIX format.
