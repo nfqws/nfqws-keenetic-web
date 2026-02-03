@@ -1,15 +1,24 @@
 import { useAuth } from '@/store/useAuth';
 import { requestFn } from '@openapi-qraft/react';
-import type { OperationError } from '@openapi-qraft/tanstack-query-react-types';
+import type {
+  OperationError,
+  RequestFnResponse,
+} from '@openapi-qraft/tanstack-query-react-types';
 import { QueryClient, type UseQueryResult } from '@tanstack/react-query';
 
 import { baseUrl } from '@/api/baseUrl';
 import { createAPIClient } from '@/api/create-api-client';
-import type {
-  ApiError,
-  FileContentResponse,
-  FilenamesResponse,
-  StatusResponse,
+import {
+  type ActionResponse,
+  type ApiError,
+  type FileContentResponse,
+  type FilenamesResponse,
+  type FileRemoveResponse,
+  type FileSaveResponse,
+  type LoginResponse,
+  type LogoutResponse,
+  type ServiceActionRequest,
+  type StatusResponse,
 } from '@/api/schema';
 
 export const queryClient = new QueryClient({
@@ -44,6 +53,13 @@ export const API = {
       body: { cmd: 'status' },
     }) as UseQueryResult<StatusResponse, OperationError<ApiError>>,
 
+  invalidateStatus: async () => {
+    const key = apiClient.indexPhp.postIndexCmd.getQueryKey({
+      body: { cmd: 'status' },
+    });
+    return queryClient.invalidateQueries({ queryKey: key });
+  },
+
   listFiles: () =>
     apiClient.indexPhp.postIndexCmd.useQuery({
       body: { cmd: 'filenames' },
@@ -71,20 +87,25 @@ export const API = {
   saveFile: async (filename: string, content: string) =>
     apiClient.indexPhp.postIndexCmd({
       body: { cmd: 'filesave', filename, content },
-    }),
+    }) as Promise<RequestFnResponse<FileSaveResponse, ApiError>>,
 
   removeFile: async (filename: string) =>
     apiClient.indexPhp.postIndexCmd({
       body: { cmd: 'fileremove', filename },
-    }),
+    }) as Promise<RequestFnResponse<FileRemoveResponse, ApiError>>,
 
-  action: (cmd: 'reload' | 'restart' | 'stop' | 'start' | 'upgrade') =>
-    apiClient.indexPhp.postIndexCmd({ body: { cmd } }),
+  action: async (cmd: ServiceActionRequest['cmd']) =>
+    apiClient.indexPhp.postIndexCmd({ body: { cmd } }) as Promise<
+      RequestFnResponse<ActionResponse, ApiError>
+    >,
 
-  login: (user: string, password: string) =>
+  login: async (user: string, password: string) =>
     apiClient.indexPhp.postIndexCmd({
       body: { cmd: 'login', user, password },
-    }),
+    }) as Promise<RequestFnResponse<LoginResponse, ApiError>>,
 
-  logout: () => apiClient.indexPhp.postIndexCmd({ body: { cmd: 'logout' } }),
+  logout: async () =>
+    apiClient.indexPhp.postIndexCmd({ body: { cmd: 'logout' } }) as Promise<
+      RequestFnResponse<LogoutResponse, ApiError>
+    >,
 } as const;

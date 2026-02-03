@@ -272,15 +272,12 @@ components:
           type: integer
           description: 0 = ok, non-zero = error
         output:
-          type: array
-          items: { type: string }
+          type: string
           description: Optional console-like output lines
       additionalProperties: true
       example:
         status: 0
-        output:
-          - "Restarting nfqws..."
-          - "OK"
+        output: "Restarting nfqws..."
 
     LoginResponse:
       type: object
