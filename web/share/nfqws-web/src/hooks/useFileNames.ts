@@ -1,5 +1,12 @@
 import { API } from '@/api/client';
 
+export type FileInfo = {
+  name: string;
+  editable: boolean;
+  removable: boolean;
+  type: 'conf' | 'list' | 'log';
+};
+
 export function useFileNames() {
   const { isPending, data, error } = API.listFiles();
 
@@ -7,7 +14,7 @@ export function useFileNames() {
     throw error;
   }
 
-  const files =
+  const files: FileInfo[] =
     data?.files.map((filename) => {
       const isConf =
         filename.endsWith('.conf') ||
@@ -30,6 +37,7 @@ export function useFileNames() {
 
   return {
     files,
+    findFile: (name: string) => files.find((file) => file.name === name),
     isPending,
   };
 }

@@ -1,11 +1,11 @@
-import { useAuth } from '@/store/useAuth';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 
 import { Editor } from '@/components/Editor';
-import { FilesTabs } from '@/components/FilesTabs';
 
+import { useAppContext } from '@/hooks/useAppContext';
 import { CONF_FILE_NAME, useFileContent } from '@/hooks/useFileContent';
+import { useFileNames } from '@/hooks/useFileNames';
 
 export const Route = createFileRoute('/{-$filename}')({
   component: RouteComponent,
@@ -15,26 +15,22 @@ function RouteComponent() {
   const { filename } = Route.useParams();
   const file = filename || CONF_FILE_NAME;
   const { content, isPending } = useFileContent(file);
-  const { auth } = useAuth();
+  const { setCurrentFile, setNeedSave } = useAppContext();
+  const { findFile, isPending: isPendingNames } = useFileNames();
+  const fileInfo = findFile(file);
 
-  return isPending ? (
-    <Backdrop open={true}>
-      <CircularProgress color="inherit" />
-    </Backdrop>
-  ) : (
-    <>
-      {auth && <FilesTabs />}
+  useEffect(() => {
+    setCurrentFile(file);
+    setNeedSave(false);
+  }, [file, setCurrentFile]);
 
+  return (
+    fileInfo && (
       <Editor
         value={content ?? ''}
-        type={
-          file.endsWith('.conf')
-            ? 'conf'
-            : file.endsWith('.log')
-              ? 'log'
-              : 'list'
-        }
+        file={fileInfo}
+        readonly={isPending || isPendingNames || fileInfo?.type === 'log'}
       />
-    </>
+    )
   );
 }

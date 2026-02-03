@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNeedSave } from '@/store/useNeedSave';
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
@@ -19,15 +18,16 @@ import {
   Typography,
 } from '@mui/material';
 
+import { useAppContext } from '@/hooks/useAppContext';
 import { useStatus } from '@/hooks/useStatus';
 
-export const Header = ({ onSave }: { onSave: VoidFunction }) => {
+export const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const { data } = useStatus();
 
-  const { needSave } = useNeedSave();
+  const { onSave, needSave } = useAppContext();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

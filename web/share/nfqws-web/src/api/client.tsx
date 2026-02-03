@@ -51,7 +51,7 @@ export const API = {
     apiClient.indexPhp.postIndexCmd.useQuery({
       body: { cmd: 'filecontent', filename },
     }) as UseQueryResult<FileContentResponse, OperationError<ApiError>>,
-  filesave: (filename: string, content: string) =>
+  saveFile: (filename: string, content: string) =>
     apiClient.indexPhp.postIndexCmd({
       body: { cmd: 'filesave', filename, content },
     }),

@@ -1,23 +1,28 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { useNeedSave } from '@/store/useNeedSave';
+import { useEffect, useMemo } from 'react';
 import { history } from '@codemirror/commands';
 import { Compartment } from '@codemirror/state';
-import { keymap, type EditorView } from '@codemirror/view';
+import { keymap } from '@codemirror/view';
 import { Box, useTheme } from '@mui/material';
 import { vscodeDark, vscodeLight } from '@uiw/codemirror-theme-vscode';
 import ReactCodeMirror from '@uiw/react-codemirror';
+
+import { useAppContext } from '@/hooks/useAppContext';
+import type { FileInfo } from '@/hooks/useFileNames';
 
 import { nfqwsConf, nfqwsLog } from '@/utils/nfqwsCodeMirrorLang';
 
 const historyCompartment = new Compartment();
 
 interface EditorProps {
+  file: FileInfo;
   value: string;
-  type: 'conf' | 'log' | 'list';
+  readonly?: boolean;
 }
 
-export const Editor = ({ value, type }: EditorProps) => {
+export const Editor = ({ file, value, readonly = false }: EditorProps) => {
   const { palette } = useTheme();
+
+  const { onSave, editorView } = useAppContext();
 
   const extensions = useMemo(() => {
     const result = [
@@ -26,7 +31,7 @@ export const Editor = ({ value, type }: EditorProps) => {
           key: 'Ctrl-s',
           mac: 'Cmd-s',
           run: () => {
-            console.warn('Save');
+            onSave();
             return true;
           },
         },
@@ -34,27 +39,25 @@ export const Editor = ({ value, type }: EditorProps) => {
       historyCompartment.of([]),
     ];
 
-    if (type === 'conf') {
+    if (file.type === 'conf') {
       result.push(nfqwsConf());
-    } else if (type === 'log') {
+    } else if (file.type === 'log') {
       result.push(nfqwsLog());
     }
 
     return result;
-  }, [type]);
+  }, [file.name, file.type, onSave]);
 
-  const view = useRef<EditorView>(null);
+  const { setNeedSave } = useAppContext();
 
   useEffect(() => {
-    view.current?.dispatch({
+    editorView.current?.dispatch({
       effects: historyCompartment.reconfigure([]),
     });
-    view.current?.dispatch({
+    editorView.current?.dispatch({
       effects: historyCompartment.reconfigure([history()]),
     });
-  }, [value, view.current]);
-
-  const { setNeedSave } = useNeedSave();
+  }, [value, editorView.current]);
 
   return (
     <Box
@@ -86,10 +89,10 @@ export const Editor = ({ value, type }: EditorProps) => {
         value={value}
         theme={palette.mode === 'light' ? vscodeLight : vscodeDark}
         autoFocus={true}
-        readOnly={type === 'log'}
+        readOnly={readonly}
         lang="shell"
         style={{ height: '100%', fontSize: 13 }}
-        onCreateEditor={(editorView) => (view.current = editorView)}
+        onCreateEditor={(view) => (editorView.current = view)}
         onChange={(newValue) => setNeedSave(value !== newValue)}
         basicSetup={{
           lineNumbers: true,
