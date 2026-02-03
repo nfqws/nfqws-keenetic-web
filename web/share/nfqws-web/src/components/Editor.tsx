@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
+import { useNeedSave } from '@/store/useNeedSave';
 import { history } from '@codemirror/commands';
 import { Compartment } from '@codemirror/state';
 import { keymap, type EditorView } from '@codemirror/view';
@@ -53,7 +54,9 @@ export const Editor = ({ value, type }: EditorProps) => {
     view.current?.dispatch({
       effects: historyCompartment.reconfigure([history()]),
     });
-  }, [value, view]);
+  }, [value, view.current]);
+
+  const { setNeedSave } = useNeedSave();
 
   return (
     <Box
@@ -89,6 +92,7 @@ export const Editor = ({ value, type }: EditorProps) => {
         lang="shell"
         style={{ height: '100%', fontSize: 13 }}
         onCreateEditor={(editorView) => (view.current = editorView)}
+        onChange={(newValue) => setNeedSave(value !== newValue)}
         basicSetup={{
           lineNumbers: true,
           foldGutter: true,

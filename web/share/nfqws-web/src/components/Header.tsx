@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { useNeedSave } from '@/store/useNeedSave';
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
 import MenuIcon from '@mui/icons-material/Menu';
 import ReplayIcon from '@mui/icons-material/Replay';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import SaveIcon from '@mui/icons-material/Save';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import {
   Box,
+  Button,
   IconButton,
   ListItemIcon,
   Menu,
@@ -21,6 +24,8 @@ const online = true; // TODO:
 export const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const { needSave } = useNeedSave();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -85,51 +90,63 @@ export const Header = () => {
           )}
         </Stack>
 
-        <Stack direction="row" alignItems="center">
-          <IconButton
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="contained"
             size="small"
-            onClick={handleMenuOpen}
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'primary.contrastText',
-              '&:hover': { bgcolor: 'primary.dark' },
-            }}
+            startIcon={<SaveIcon />}
+            disabled={!needSave}
+            color="error"
           >
-            <MenuIcon />
-          </IconButton>
+            Save
+          </Button>
 
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleMenuClose}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
-              <ListItemIcon>
-                <ReplayIcon />
-              </ListItemIcon>
-              Restart
-            </MenuItem>
-            <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
-              <ListItemIcon>
-                <RestartAltIcon />
-              </ListItemIcon>
-              Reload
-            </MenuItem>
-            <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
-              <ListItemIcon>
-                <StopCircleIcon />
-              </ListItemIcon>
-              Stop
-            </MenuItem>
-            <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
-              <ListItemIcon>
-                <BrowserUpdatedIcon />
-              </ListItemIcon>
-              Update
-            </MenuItem>
-          </Menu>
+          <Stack direction="row" alignItems="center">
+            <IconButton
+              size="small"
+              onClick={handleMenuOpen}
+              sx={{
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
+                '&:hover': { bgcolor: 'primary.dark' },
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
+                <ListItemIcon>
+                  <ReplayIcon />
+                </ListItemIcon>
+                Restart
+              </MenuItem>
+              <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
+                <ListItemIcon>
+                  <RestartAltIcon />
+                </ListItemIcon>
+                Reload
+              </MenuItem>
+              <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
+                <ListItemIcon>
+                  <StopCircleIcon />
+                </ListItemIcon>
+                Stop
+              </MenuItem>
+              <MenuItem onClick={handleMenuClose} sx={{ fontSize: 14 }}>
+                <ListItemIcon>
+                  <BrowserUpdatedIcon />
+                </ListItemIcon>
+                Update
+              </MenuItem>
+            </Menu>
+          </Stack>
         </Stack>
       </Box>
     </Box>

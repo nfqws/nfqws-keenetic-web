@@ -15,7 +15,7 @@ if (!rootElement.innerHTML) {
   const render = () => {
     root.render(
       <StrictMode>
-        <AppRouterProvider router={router} />
+        <AppRouterProvider router={router} />,
       </StrictMode>,
     );
   };

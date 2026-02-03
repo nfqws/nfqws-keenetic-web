@@ -57,17 +57,18 @@ components:
     # -----------------------------
     IndexCmdRequest:
       oneOf:
+        - $ref: '#/components/schemas/StatusRequest'
         - $ref: '#/components/schemas/FilenamesRequest'
         - $ref: '#/components/schemas/FileContentRequest'
         - $ref: '#/components/schemas/FileSaveRequest'
         - $ref: '#/components/schemas/FileRemoveRequest'
         - $ref: '#/components/schemas/ServiceActionRequest'
-        - $ref: '#/components/schemas/UpgradeRequest'
         - $ref: '#/components/schemas/LoginRequest'
         - $ref: '#/components/schemas/LogoutRequest'
       discriminator:
         propertyName: cmd
         mapping:
+          status: '#/components/schemas/StatusRequest'
           filenames: '#/components/schemas/FilenamesRequest'
           filecontent: '#/components/schemas/FileContentRequest'
           filesave: '#/components/schemas/FileSaveRequest'
@@ -76,9 +77,18 @@ components:
           restart: '#/components/schemas/ServiceActionRequest'
           stop: '#/components/schemas/ServiceActionRequest'
           start: '#/components/schemas/ServiceActionRequest'
-          upgrade: '#/components/schemas/UpgradeRequest'
+          upgrade: '#/components/schemas/ServiceActionRequest'
           login: '#/components/schemas/LoginRequest'
           logout: '#/components/schemas/LogoutRequest'
+
+    StatusRequest:
+      type: object
+      required: [cmd]
+      properties:
+        cmd:
+          type: string
+          enum: [status]
+      additionalProperties: false
 
     FilenamesRequest:
       type: object
@@ -132,16 +142,7 @@ components:
       properties:
         cmd:
           type: string
-          enum: [reload, restart, stop, start]
-      additionalProperties: false
-
-    UpgradeRequest:
-      type: object
-      required: [cmd]
-      properties:
-        cmd:
-          type: string
-          enum: [upgrade]
+          enum: [reload, restart, stop, start, upgrade]
       additionalProperties: false
 
     LoginRequest:
@@ -170,6 +171,7 @@ components:
     # -----------------------------
     IndexCmdResponse:
       oneOf:
+        - $ref: '#/components/schemas/StatusResponse'
         - $ref: '#/components/schemas/FilenamesResponse'
         - $ref: '#/components/schemas/FileContentResponse'
         - $ref: '#/components/schemas/FileSaveResponse'
@@ -178,16 +180,13 @@ components:
         - $ref: '#/components/schemas/LoginResponse'
         - $ref: '#/components/schemas/LogoutResponse'
 
-    FilenamesResponse:
+    StatusResponse:
       type: object
-      required: [status, files, service, nfqws2, version]
+      required: [status, service, nfqws2, version]
       properties:
         status:
           type: integer
           enum: [0]
-        files:
-          type: array
-          items: { type: string }
         service:
           type: boolean
           description: Service status (running or not)
@@ -199,10 +198,24 @@ components:
       additionalProperties: false
       example:
         status: 0
-        files: ["nfqws2.conf", "user.list", "exclude.list", "auto.list", "ipset.list", "ipset_exclude.list", "nfqws2.log"]
         service: true
         nfqws2: true
         version: "0.1.4"
+
+    FilenamesResponse:
+      type: object
+      required: [status, files]
+      properties:
+        status:
+          type: integer
+          enum: [0]
+        files:
+          type: array
+          items: { type: string }
+      additionalProperties: false
+      example:
+        status: 0
+        files: ["nfqws2.conf", "user.list", "exclude.list", "auto.list", "ipset.list", "ipset_exclude.list", "nfqws2.log"]
 
     FileContentResponse:
       type: object

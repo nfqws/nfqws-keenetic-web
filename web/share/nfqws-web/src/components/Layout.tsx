@@ -1,7 +1,9 @@
 import { type ReactNode } from 'react';
+import { useAuth } from '@/store/useAuth';
 import {
-  Alert,
+  Backdrop,
   Box,
+  CircularProgress,
   Container,
   CssBaseline,
   ThemeProvider,
@@ -11,80 +13,84 @@ import { createTheme } from '@mui/material/styles';
 import { FilesTabs } from '@/components/FilesTabs';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
+import { LoginDialog } from '@/components/LoginDialog';
+
+import { useStatus } from '@/hooks/useStatus';
+
+const theme = createTheme({
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: { main: '#0097dc' },
+        secondary: { main: '#5cc8ff' },
+
+        background: {
+          default: '#f4f7fb',
+          paper: '#ffffff',
+        },
+
+        text: {
+          primary: '#0f172a',
+          secondary: '#6e6e6e',
+        },
+
+        divider: 'rgba(15,23,42,0.08)',
+
+        success: { main: '#16a34a' },
+        error: { main: '#dc2626' },
+        warning: { main: '#d97706' },
+        info: { main: '#0284c7' },
+      },
+    },
+    dark: {
+      palette: {
+        primary: { main: '#0097dc' },
+        secondary: { main: '#5cc8ff' },
+
+        background: {
+          default: '#161c27',
+          paper: '#1b2434',
+        },
+
+        text: {
+          primary: '#e6edf3',
+          secondary: '#949b9f',
+        },
+
+        divider: 'rgba(255,255,255,0.08)',
+
+        success: { main: '#22c55e' },
+        error: { main: '#ef4444' },
+        warning: { main: '#f59e0b' },
+        info: { main: '#38bdf8' },
+      },
+    },
+  },
+
+  typography: {
+    fontSize: 14,
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro Display', system-ui, sans-serif",
+    button: {
+      textTransform: 'none',
+      fontWeight: 500,
+    },
+  },
+
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
+  },
+});
 
 export function Layout({ children }: { children: ReactNode }) {
-  const user = true; // TODO:
-
-  const theme = createTheme({
-    colorSchemes: {
-      light: {
-        palette: {
-          primary: { main: '#0097dc' },
-          secondary: { main: '#5cc8ff' },
-
-          background: {
-            default: '#f4f7fb',
-            paper: '#ffffff',
-          },
-
-          text: {
-            primary: '#0f172a',
-            secondary: '#6e6e6e',
-          },
-
-          divider: 'rgba(15,23,42,0.08)',
-
-          success: { main: '#16a34a' },
-          error: { main: '#dc2626' },
-          warning: { main: '#d97706' },
-          info: { main: '#0284c7' },
-        },
-      },
-      dark: {
-        palette: {
-          primary: { main: '#0097dc' },
-          secondary: { main: '#5cc8ff' },
-
-          background: {
-            default: '#161c27',
-            paper: '#1b2434',
-          },
-
-          text: {
-            primary: '#e6edf3',
-            secondary: '#949b9f',
-          },
-
-          divider: 'rgba(255,255,255,0.08)',
-
-          success: { main: '#22c55e' },
-          error: { main: '#ef4444' },
-          warning: { main: '#f59e0b' },
-          info: { main: '#38bdf8' },
-        },
-      },
-    },
-
-    typography: {
-      fontSize: 14,
-      fontFamily:
-        "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro Display', system-ui, sans-serif",
-      button: {
-        textTransform: 'none',
-        fontWeight: 500,
-      },
-    },
-
-    components: {
-      MuiPaper: {
-        styleOverrides: {
-          root: {
-            backgroundImage: 'none',
-          },
-        },
-      },
-    },
-  });
+  const { auth } = useAuth();
+  const { isPending } = useStatus();
 
   return (
     <ThemeProvider theme={theme}>
@@ -108,14 +114,17 @@ export function Layout({ children }: { children: ReactNode }) {
         >
           <Header />
 
-          <FilesTabs />
+          {auth && <FilesTabs />}
+
           <Box flex={1} sx={{ display: 'flex' }}>
-            {user ? (
+            {isPending ? (
+              <Backdrop open={true}>
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            ) : auth ? (
               children
             ) : (
-              <Box sx={{ mb: 3 }}>
-                <Alert severity="info">Please login to use NFQWS.</Alert>
-              </Box>
+              <LoginDialog />
             )}
           </Box>
 

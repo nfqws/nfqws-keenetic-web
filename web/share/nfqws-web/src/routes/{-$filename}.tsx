@@ -10,17 +10,14 @@ export const Route = createFileRoute('/{-$filename}')({
 
 function RouteComponent() {
   const { filename } = Route.useParams();
-  const { content } = useFileContent(filename || CONF_FILE_NAME);
+  const file = filename || CONF_FILE_NAME;
+  const { content } = useFileContent(file);
 
   return (
     <Editor
       value={content ?? ''}
       type={
-        filename.endsWith('.conf')
-          ? 'conf'
-          : filename.endsWith('.log')
-            ? 'log'
-            : 'list'
+        file.endsWith('.conf') ? 'conf' : file.endsWith('.log') ? 'log' : 'list'
       }
     />
   );

@@ -1,10 +1,7 @@
-import { useApi } from '@/utils/useApi';
-
-export type FileType = 'conf' | 'log' | 'list';
+import { API } from '@/api/client';
 
 export function useFileNames() {
-  const api = useApi();
-  const { isPending, data, error } = api.listFiles();
+  const { isPending, data, error } = API.listFiles();
 
   if (error) {
     throw error;
