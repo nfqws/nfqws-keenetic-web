@@ -9,8 +9,6 @@ import ReactCodeMirror from '@uiw/react-codemirror';
 
 import { nfqwsConf, nfqwsLog } from '@/utils/nfqwsCodeMirrorLang';
 
-const isAuthenticated = true; // TODO:
-
 const historyCompartment = new Compartment();
 
 interface EditorProps {
@@ -88,7 +86,7 @@ export const Editor = ({ value, type }: EditorProps) => {
         value={value}
         theme={palette.mode === 'light' ? vscodeLight : vscodeDark}
         autoFocus={true}
-        readOnly={!isAuthenticated || type === 'log'}
+        readOnly={type === 'log'}
         lang="shell"
         style={{ height: '100%', fontSize: 13 }}
         onCreateEditor={(editorView) => (view.current = editorView)}

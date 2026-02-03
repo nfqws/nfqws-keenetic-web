@@ -1,21 +1,11 @@
 import { type ReactNode } from 'react';
 import { useAuth } from '@/store/useAuth';
-import {
-  Backdrop,
-  Box,
-  CircularProgress,
-  Container,
-  CssBaseline,
-  ThemeProvider,
-} from '@mui/material';
+import { Box, Container, CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 
-import { FilesTabs } from '@/components/FilesTabs';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { LoginDialog } from '@/components/LoginDialog';
-
-import { useStatus } from '@/hooks/useStatus';
 
 const theme = createTheme({
   colorSchemes: {
@@ -90,7 +80,6 @@ const theme = createTheme({
 
 export function Layout({ children }: { children: ReactNode }) {
   const { auth } = useAuth();
-  const { isPending } = useStatus();
 
   return (
     <ThemeProvider theme={theme}>
@@ -112,21 +101,13 @@ export function Layout({ children }: { children: ReactNode }) {
             },
           }}
         >
-          <Header />
+          <Header
+            onSave={() => {
+              console.warn('Save handler not implemented yet');
+            }}
+          />
 
-          {auth && <FilesTabs />}
-
-          <Box flex={1} sx={{ display: 'flex' }}>
-            {isPending ? (
-              <Backdrop open={true}>
-                <CircularProgress color="inherit" />
-              </Backdrop>
-            ) : auth ? (
-              children
-            ) : (
-              <LoginDialog />
-            )}
-          </Box>
+          {auth ? children : <LoginDialog />}
 
           <Footer />
         </Box>

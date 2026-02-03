@@ -19,11 +19,13 @@ import {
   Typography,
 } from '@mui/material';
 
-const online = true; // TODO:
+import { useStatus } from '@/hooks/useStatus';
 
-export const Header = () => {
+export const Header = ({ onSave }: { onSave: VoidFunction }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const { data } = useStatus();
 
   const { needSave } = useNeedSave();
 
@@ -69,7 +71,7 @@ export const Header = () => {
             NFQWS 2
           </Typography>
 
-          {online ? (
+          {data?.service ? (
             <CloudDoneIcon
               sx={{
                 fontSize: 20,
@@ -97,6 +99,7 @@ export const Header = () => {
             startIcon={<SaveIcon />}
             disabled={!needSave}
             color="error"
+            onClick={onSave}
           >
             Save
           </Button>

@@ -10,42 +10,32 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Char123FilenameChar125RouteImport } from './routes/{-$filename}'
-import { Route as LoginRouteImport } from './routes/login'
 
 const Char123FilenameChar125Route = Char123FilenameChar125RouteImport.update({
   id: '/{-$filename}',
   path: '/{-$filename}',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
-  '/login': typeof LoginRoute
   '/{-$filename}': typeof Char123FilenameChar125Route
 }
 export interface FileRoutesByTo {
-  '/login': typeof LoginRoute
   '/{-$filename}': typeof Char123FilenameChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/login': typeof LoginRoute
   '/{-$filename}': typeof Char123FilenameChar125Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/{-$filename}'
+  fullPaths: '/{-$filename}'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/{-$filename}'
-  id: '__root__' | '/login' | '/{-$filename}'
+  to: '/{-$filename}'
+  id: '__root__' | '/{-$filename}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  LoginRoute: typeof LoginRoute
   Char123FilenameChar125Route: typeof Char123FilenameChar125Route
 }
 
@@ -58,18 +48,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123FilenameChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  LoginRoute: LoginRoute,
   Char123FilenameChar125Route: Char123FilenameChar125Route,
 }
 export const routeTree = rootRouteImport
