@@ -1,4 +1,4 @@
-import { useAuth } from '@/store/useAuth';
+import { useAppStore } from '@/store/useAppStore';
 import { requestFn } from '@openapi-qraft/react';
 import type {
   OperationError,
@@ -39,9 +39,9 @@ const apiClient = createAPIClient({
     const result = await requestFn(schema, requestInfo);
     const status = result.response?.status;
     if (status === 401) {
-      useAuth.getState().setAuth(false);
+      useAppStore.getState().setAuth(false);
     } else if (status && status >= 200 && status < 300) {
-      useAuth.getState().setAuth(true);
+      useAppStore.getState().setAuth(true);
     }
     return result;
   },

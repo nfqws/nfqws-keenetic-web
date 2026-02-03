@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { useAppStore } from '@/store/useAppStore';
 import { history } from '@codemirror/commands';
 import { Compartment } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
@@ -6,7 +7,6 @@ import { Box, useTheme } from '@mui/material';
 import { vscodeDark, vscodeLight } from '@uiw/codemirror-theme-vscode';
 import ReactCodeMirror from '@uiw/react-codemirror';
 
-import { useAppContext } from '@/hooks/useAppContext';
 import type { FileInfo } from '@/hooks/useFileNames';
 
 import { nfqwsConf, nfqwsLog } from '@/utils/nfqwsCodeMirrorLang';
@@ -22,7 +22,7 @@ interface EditorProps {
 export const Editor = ({ file, value, readonly = false }: EditorProps) => {
   const { palette } = useTheme();
 
-  const { onSave, editorView } = useAppContext();
+  const { setNeedSave, editorView, setEditorView, onSave } = useAppStore();
 
   const extensions = useMemo(() => {
     const result = [
@@ -48,16 +48,14 @@ export const Editor = ({ file, value, readonly = false }: EditorProps) => {
     return result;
   }, [file.name, file.type, onSave]);
 
-  const { setNeedSave } = useAppContext();
-
   useEffect(() => {
-    editorView.current?.dispatch({
+    editorView?.dispatch({
       effects: historyCompartment.reconfigure([]),
     });
-    editorView.current?.dispatch({
+    editorView?.dispatch({
       effects: historyCompartment.reconfigure([history()]),
     });
-  }, [value, editorView.current]);
+  }, [value, editorView]);
 
   return (
     <Box
@@ -92,7 +90,7 @@ export const Editor = ({ file, value, readonly = false }: EditorProps) => {
         readOnly={readonly}
         lang="shell"
         style={{ height: '100%', fontSize: 13 }}
-        onCreateEditor={(view) => (editorView.current = view)}
+        onCreateEditor={(view) => setEditorView(view)}
         onChange={(newValue) => setNeedSave(value !== newValue)}
         basicSetup={{
           lineNumbers: true,

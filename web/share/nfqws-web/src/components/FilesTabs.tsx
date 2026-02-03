@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAppStore } from '@/store/useAppStore';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
@@ -14,14 +15,13 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { CreateFileDialog } from '@/components/CreateFileDialog';
 import { RemoveFileDialog } from '@/components/RemoveFileDialog';
 
-import { useAppContext } from '@/hooks/useAppContext';
 import { useFileNames } from '@/hooks/useFileNames';
 
 export const FilesTabs = () => {
   const { files } = useFileNames();
 
   const navigate = useNavigate();
-  const { currentFile, needSave } = useAppContext();
+  const { currentFile, needSave } = useAppStore();
 
   const [alertRedirect, setAlertRedirect] = useState('');
   const [createDialog, setCreateDialog] = useState(false);

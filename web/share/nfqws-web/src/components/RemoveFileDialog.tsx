@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useAppStore } from '@/store/useAppStore';
 import {
   Alert,
   Button,
@@ -12,8 +13,6 @@ import { useNavigate } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 
-import { useAppContext } from '@/hooks/useAppContext';
-
 export const RemoveFileDialog = ({
   name,
   open,
@@ -24,7 +23,7 @@ export const RemoveFileDialog = ({
   onClose: VoidFunction;
 }) => {
   const [error, setError] = useState(false);
-  const { currentFile } = useAppContext();
+  const { currentFile } = useAppStore();
   const navigate = useNavigate();
 
   const handleSubmit = useCallback(async () => {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAppStore } from '@/store/useAppStore';
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
@@ -24,7 +25,6 @@ import { type ServiceActionRequest } from '@/api/schema';
 
 import { OutputLogDialog } from '@/components/OutputLogDialog';
 
-import { useAppContext } from '@/hooks/useAppContext';
 import { useStatus } from '@/hooks/useStatus';
 
 export const Header = () => {
@@ -33,7 +33,7 @@ export const Header = () => {
 
   const { service } = useStatus();
 
-  const { onSave, needSave } = useAppContext();
+  const { needSave, onSave } = useAppStore();
 
   const [output, setOutput] = useState<boolean | string>(false);
 

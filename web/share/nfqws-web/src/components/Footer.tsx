@@ -1,4 +1,4 @@
-import { useAuth } from '@/store/useAuth';
+import { useAppStore } from '@/store/useAppStore';
 import { LogoutOutlined } from '@mui/icons-material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Box, Link, Stack, Typography } from '@mui/material';
@@ -10,7 +10,7 @@ import { useStatus } from '@/hooks/useStatus';
 export const Footer = () => {
   const { version, latest, updateAvailable, url } = useStatus();
 
-  const { auth } = useAuth();
+  const { auth } = useAppStore();
 
   return (
     <Box

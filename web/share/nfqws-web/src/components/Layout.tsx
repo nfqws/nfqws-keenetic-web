@@ -1,18 +1,12 @@
-import { useMemo, useRef, useState, type ReactNode } from 'react';
-import { useAuth } from '@/store/useAuth';
-import type { EditorView } from '@codemirror/view';
+import { type ReactNode } from 'react';
+import { useAppStore } from '@/store/useAppStore';
 import { Box, Container, CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-
-import { API } from '@/api/client';
 
 import { FilesTabs } from '@/components/FilesTabs';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { LoginDialog } from '@/components/LoginDialog';
-
-import { AppContext, type AppContextData } from '@/hooks/useAppContext';
-import { CONF_FILE_NAME } from '@/hooks/useFileContent';
 
 const theme = createTheme({
   colorSchemes: {
@@ -86,68 +80,39 @@ const theme = createTheme({
 });
 
 export function Layout({ children }: { children: ReactNode }) {
-  const { auth } = useAuth();
-
-  const [currentFile, setCurrentFile] = useState(CONF_FILE_NAME);
-  const [needSave, setNeedSave] = useState(false);
-  const editorView = useRef<EditorView>(null);
-  const contextData: AppContextData = useMemo(
-    () => ({
-      onSave: async () => {
-        if (needSave) {
-          const text = editorView.current?.state.doc.toString();
-          if (text !== undefined) {
-            const { data } = await API.saveFile(currentFile, text);
-            if (data?.status === 0) {
-              setNeedSave(false);
-            } else {
-              // TODO: error
-            }
-          }
-        }
-      },
-      currentFile,
-      setCurrentFile,
-      needSave,
-      setNeedSave,
-      editorView,
-    }),
-    [currentFile, needSave, editorView],
-  );
+  const { auth } = useAppStore();
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
 
-      <AppContext.Provider value={contextData}>
-        <Container disableGutters sx={{ m: 0, px: 0 }} maxWidth={false}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: '100vh',
-              width: '100%',
-              maxWidth: 1620,
-              mx: 'auto',
-              '@media (min-width: 1621px)': {
-                borderRight: '1px solid',
-                borderLeft: '1px solid',
-                borderColor: 'divider',
-              },
-            }}
-          >
-            <Header />
+      <Container disableGutters sx={{ m: 0, px: 0 }} maxWidth={false}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            width: '100%',
+            maxWidth: 1620,
+            mx: 'auto',
+            '@media (min-width: 1621px)': {
+              borderRight: '1px solid',
+              borderLeft: '1px solid',
+              borderColor: 'divider',
+            },
+          }}
+        >
+          <Header />
 
-            {auth && <FilesTabs />}
+          {auth && <FilesTabs />}
 
-            <Box flex={1} sx={{ display: 'flex' }}>
-              {auth ? children : <LoginDialog />}
-            </Box>
-
-            <Footer />
+          <Box flex={1} sx={{ display: 'flex' }}>
+            {auth ? children : <LoginDialog />}
           </Box>
-        </Container>
-      </AppContext.Provider>
+
+          <Footer />
+        </Box>
+      </Container>
     </ThemeProvider>
   );
 }
