@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useConfig } from '@/config/useConfig';
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
@@ -32,7 +33,9 @@ export const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const { service } = useStatus();
+  const { service, nfqws2 } = useStatus();
+
+  const config = useConfig(nfqws2);
 
   const { needSave, onSave } = useAppStore();
 
@@ -86,7 +89,7 @@ export const Header = () => {
               fontSize={18}
               lineHeight={1}
             >
-              NFQWS 2
+              {config.title}
             </Typography>
 
             {service ? (

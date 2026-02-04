@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tanstackQuery from '@tanstack/eslint-plugin-query';
 import pluginRouter from '@tanstack/eslint-plugin-router';
+import noRelativeImports from 'eslint-plugin-no-relative-import-paths';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
@@ -32,6 +33,7 @@ export default tseslint.config(
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       '@tanstack/query': tanstackQuery,
+      'no-relative-import-paths': noRelativeImports,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -42,6 +44,15 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      'no-relative-import-paths/no-relative-import-paths': [
+        'error',
+        {
+          allowSameFolder: true,
+          allowedDepth: 1,
+          rootDir: 'src',
+          prefix: '',
+        },
       ],
     },
   },

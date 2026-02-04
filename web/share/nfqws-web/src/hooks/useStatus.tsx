@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useConfig } from '@/config/useConfig';
 import { useQuery } from '@tanstack/react-query';
 
 import { API } from '@/api/client';
@@ -22,13 +23,14 @@ const parseVersion = (version: string | undefined | null): Version => {
     : [0, 0, 0];
 };
 
-export const useVersionCheck = () => {
+export const useVersionCheck = (nfqws2 = false, enabled = true) => {
+  const config = useConfig(nfqws2);
+
   return useQuery({
-    queryKey: ['version'],
+    queryKey: ['version', nfqws2],
+    enabled,
     queryFn: async () => {
-      const res = await fetch(
-        'https://api.github.com/repos/nfqws/nfqws2-keenetic/releases/latest',
-      );
+      const res = await fetch(config.updateUrl);
       if (!res.ok) {
         return { tag_name: 'v0.0.0', html_url: '' };
       }
@@ -54,11 +56,14 @@ type UseStatusResult = {
 };
 
 export const useStatus = (): UseStatusResult => {
-  const { data: latest } = useVersionCheck();
-  const { data: status, isPending } = API.status();
+  const { data: status, isPending, isError } = API.status();
+  const { data: latest } = useVersionCheck(
+    status?.nfqws2 ?? false,
+    status?.status === 0 && !isPending && !isError,
+  );
 
   return useMemo(() => {
-    if (!isPending && latest && status?.status === 0) {
+    if (!isError && !isPending && latest && status?.status === 0) {
       const current = parseVersion(status.version);
       const updateAvailable = compareVersions(current, latest.version);
 
@@ -82,5 +87,5 @@ export const useStatus = (): UseStatusResult => {
       updateAvailable: false,
       isPending,
     };
-  }, [latest, status, isPending]);
+  }, [latest, status, isPending, isError]);
 };
