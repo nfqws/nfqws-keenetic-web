@@ -33,8 +33,7 @@ export const OutputLogDialog = ({
             variant="outlined"
             sx={{
               p: 2,
-              fontFamily:
-                'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
+              fontFamily: (theme) => theme.typography.mono.fontFamily,
               fontSize: 13,
               lineHeight: 1.5,
               bgcolor: 'background.default',

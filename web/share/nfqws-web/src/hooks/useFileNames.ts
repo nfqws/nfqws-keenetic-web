@@ -38,7 +38,7 @@ export function useFileNames() {
         filename.endsWith('.list-old');
       const isOpkg = filename.endsWith('-opkg') || filename.endsWith('-old');
       const isRemovable =
-        PROTECTED_FILES.indexOf(filename) < 0 && !filename.endsWith('.log');
+        !PROTECTED_FILES.includes(filename) && !filename.endsWith('.log');
 
       return {
         name: filename,

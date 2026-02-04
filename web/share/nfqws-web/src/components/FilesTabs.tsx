@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAppStore } from '@/store/useAppStore';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
@@ -14,6 +13,8 @@ import { API } from '@/api/client';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { CreateFileDialog } from '@/components/CreateFileDialog';
 import { RemoveFileDialog } from '@/components/RemoveFileDialog';
+
+import { useAppStore } from '@/store/useAppStore';
 
 import { useFileNames } from '@/hooks/useFileNames';
 
@@ -44,7 +45,7 @@ export const FilesTabs = () => {
             if (needSave) {
               setAlertRedirect(value);
             } else {
-              void navigate({ to: `/${value}` });
+              void navigate({ to: value === 'main' ? '/' : `/${value}` });
             }
           }}
           variant="scrollable"
@@ -54,6 +55,25 @@ export const FilesTabs = () => {
             flex: 1,
           }}
         >
+          <Tab
+            key="main"
+            value="main"
+            icon={<SettingsOutlinedIcon fontSize="small" />}
+            iconPosition="start"
+            label="Config"
+            sx={{
+              minHeight: '50px',
+              fontSize: 14,
+              transition: 'color 0.1s ease-in-out',
+              '&.Mui-selected': {
+                color: 'text.primary',
+              },
+              '&:hover': {
+                color: 'text.primary',
+              },
+            }}
+          />
+
           {files.map(({ name, removable, editable, type }) => {
             let icon = undefined;
 

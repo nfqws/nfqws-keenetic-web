@@ -1,9 +1,10 @@
-import { useAppStore } from '@/store/useAppStore';
 import { LogoutOutlined } from '@mui/icons-material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Box, Link, Stack, Typography } from '@mui/material';
 
 import { API } from '@/api/client';
+
+import { useAppStore } from '@/store/useAppStore';
 
 import { useStatus } from '@/hooks/useStatus';
 

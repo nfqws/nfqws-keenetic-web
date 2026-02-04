@@ -1,11 +1,12 @@
 import { useEffect, useMemo } from 'react';
-import { useAppStore } from '@/store/useAppStore';
 import { history } from '@codemirror/commands';
 import { Compartment } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { Box, useTheme } from '@mui/material';
 import { vscodeDark, vscodeLight } from '@uiw/codemirror-theme-vscode';
 import ReactCodeMirror from '@uiw/react-codemirror';
+
+import { useAppStore } from '@/store/useAppStore';
 
 import type { FileInfo } from '@/hooks/useFileNames';
 
@@ -31,7 +32,7 @@ export const Editor = ({ file, value, readonly = false }: EditorProps) => {
           key: 'Ctrl-s',
           mac: 'Cmd-s',
           run: () => {
-            onSave();
+            void onSave();
             return true;
           },
         },
@@ -46,7 +47,7 @@ export const Editor = ({ file, value, readonly = false }: EditorProps) => {
     }
 
     return result;
-  }, [file.name, file.type, onSave]);
+  }, [file, onSave]);
 
   useEffect(() => {
     editorView?.dispatch({

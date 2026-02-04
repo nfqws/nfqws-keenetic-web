@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import tanstackQuery from '@tanstack/eslint-plugin-query';
 import pluginRouter from '@tanstack/eslint-plugin-router';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -14,10 +15,10 @@ export default tseslint.config(
       '.vite',
       '.tanstack',
       'public/mockServiceWorker.js',
-      'src/mocks/generated/**',
-      'src/api/*/services/**',
-      'src/api/*/create-api-client.ts',
-      'src/api/*/index.ts',
+      'src/mocks/**',
+      'src/api/services/**',
+      'src/api/create-api-client.ts',
+      'src/api/index.ts',
     ],
   },
   {
@@ -30,6 +31,7 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      '@tanstack/query': tanstackQuery,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -41,6 +43,12 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+    },
+  },
+  {
+    files: ['src/routes/**'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 );

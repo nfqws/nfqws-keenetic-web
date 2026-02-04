@@ -200,12 +200,8 @@ function tokenBase(stream: StringStream, state: ConfState): string | null {
   }
 
   // Paths
-  if (
-    ch === '/' &&
-    stream.peek() &&
-    /[\w\-.\/]/.test(stream.peek() as string)
-  ) {
-    stream.eatWhile(/[\w\-.\/]/);
+  if (ch === '/' && stream.peek() && /[\w\-./]/.test(stream.peek() as string)) {
+    stream.eatWhile(/[\w\-./]/);
     return 'string-2';
   }
 
@@ -240,7 +236,7 @@ function tokenBase(stream: StringStream, state: ConfState): string | null {
     }
   }
 
-  stream.eatWhile(/[\w\$_]/);
+  stream.eatWhile(/[\w$_]/);
   const cur = stream.current();
 
   if (ops.test(cur)) return 'builtin';
@@ -369,7 +365,7 @@ function logTokenBase(stream: StringStream, _state: LogState): string | null {
 
   // timestamps
   if (/[\d:]/.test(ch)) {
-    stream.eatWhile(/[\d\-:\.TZ]/);
+    stream.eatWhile(/[\d\-:.TZ]/);
     const current = stream.current();
     if (
       /^\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}/.test(current) ||
@@ -380,8 +376,8 @@ function logTokenBase(stream: StringStream, _state: LogState): string | null {
   }
 
   // IPs
-  if (/[\d\.]/.test(ch)) {
-    stream.eatWhile(/[\d\.:]/);
+  if (/[\d.]/.test(ch)) {
+    stream.eatWhile(/[\d.:]/);
     const ip = stream.current();
     if (/^\d+\.\d+\.\d+\.\d+(:\d+)?$/.test(ip)) {
       return 'number';

@@ -1,5 +1,4 @@
 import { type ReactNode } from 'react';
-import { useAppStore } from '@/store/useAppStore';
 import { Box, Container, CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 
@@ -7,6 +6,8 @@ import { FilesTabs } from '@/components/FilesTabs';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { LoginDialog } from '@/components/LoginDialog';
+
+import { useAppStore } from '@/store/useAppStore';
 
 const theme = createTheme({
   colorSchemes: {
@@ -65,6 +66,12 @@ const theme = createTheme({
     button: {
       textTransform: 'none',
       fontWeight: 500,
+    },
+    mono: {
+      fontFamily:
+        'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
+      fontSize: '0.8125rem',
+      lineHeight: '1.5em',
     },
   },
 

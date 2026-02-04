@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { API } from '@/api/client';
@@ -26,10 +27,10 @@ export const useVersionCheck = () => {
     queryKey: ['version'],
     queryFn: async () => {
       const res = await fetch(
-        'https://api.github.com/repos/nfqws/nfqws2-keenetic/releases/latest',
+        'https://api.github.com/repos/nfqws/nfqws2-xkeenetic/releases/latest',
       );
       if (!res.ok) {
-        throw new Error('Failed');
+        return { tag_name: 'v0.0.0', html_url: '' };
       }
       return res.json();
     },
@@ -56,28 +57,30 @@ export const useStatus = (): UseStatusResult => {
   const { data: latest } = useVersionCheck();
   const { data: status, isPending } = API.status();
 
-  if (!isPending && latest && status?.status === 0) {
-    const current = parseVersion(status.version);
-    const updateAvailable = compareVersions(current, latest.version);
+  return useMemo(() => {
+    if (!isPending && latest && status?.status === 0) {
+      const current = parseVersion(status.version);
+      const updateAvailable = compareVersions(current, latest.version);
+
+      return {
+        nfqws2: status.nfqws2,
+        service: status.service,
+        version: `${current.join('.')}`,
+        latest: `${latest.version.join('.')}`,
+        url: latest.url || '',
+        updateAvailable,
+        isPending,
+      };
+    }
 
     return {
-      nfqws2: status.nfqws2,
-      service: status.service,
-      version: `${current.join('.')}`,
-      latest: `${latest.version.join('.')}`,
-      url: latest.url || '',
-      updateAvailable,
+      nfqws2: false,
+      service: false,
+      version: '0.0.0',
+      latest: '0.0.0',
+      url: '',
+      updateAvailable: false,
       isPending,
     };
-  }
-
-  return {
-    nfqws2: false,
-    service: false,
-    version: '0.0.0',
-    latest: '0.0.0',
-    url: '',
-    updateAvailable: false,
-    isPending,
-  };
+  }, [latest, status, isPending]);
 };

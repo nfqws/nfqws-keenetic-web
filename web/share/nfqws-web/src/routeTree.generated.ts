@@ -9,50 +9,68 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Char123FilenameChar125RouteImport } from './routes/{-$filename}'
+import { Route as FilenameRouteImport } from './routes/$filename'
+import { Route as IndexRouteImport } from './routes/index'
 
-const Char123FilenameChar125Route = Char123FilenameChar125RouteImport.update({
-  id: '/{-$filename}',
-  path: '/{-$filename}',
+const FilenameRoute = FilenameRouteImport.update({
+  id: '/$filename',
+  path: '/$filename',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/{-$filename}': typeof Char123FilenameChar125Route
+  '/': typeof IndexRoute
+  '/$filename': typeof FilenameRoute
 }
 export interface FileRoutesByTo {
-  '/{-$filename}': typeof Char123FilenameChar125Route
+  '/': typeof IndexRoute
+  '/$filename': typeof FilenameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/{-$filename}': typeof Char123FilenameChar125Route
+  '/': typeof IndexRoute
+  '/$filename': typeof FilenameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/{-$filename}'
+  fullPaths: '/' | '/$filename'
   fileRoutesByTo: FileRoutesByTo
-  to: '/{-$filename}'
-  id: '__root__' | '/{-$filename}'
+  to: '/' | '/$filename'
+  id: '__root__' | '/' | '/$filename'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  Char123FilenameChar125Route: typeof Char123FilenameChar125Route
+  IndexRoute: typeof IndexRoute
+  FilenameRoute: typeof FilenameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/{-$filename}': {
-      id: '/{-$filename}'
-      path: '/{-$filename}'
-      fullPath: '/{-$filename}'
-      preLoaderRoute: typeof Char123FilenameChar125RouteImport
+    '/$filename': {
+      id: '/$filename'
+      path: '/$filename'
+      fullPath: '/$filename'
+      preLoaderRoute: typeof FilenameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  Char123FilenameChar125Route: Char123FilenameChar125Route,
+  IndexRoute: IndexRoute,
+  FilenameRoute: FilenameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

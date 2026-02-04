@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAppStore } from '@/store/useAppStore';
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
@@ -24,6 +23,8 @@ import { API } from '@/api/client';
 import { type ServiceActionRequest } from '@/api/schema';
 
 import { OutputLogDialog } from '@/components/OutputLogDialog';
+
+import { useAppStore } from '@/store/useAppStore';
 
 import { useStatus } from '@/hooks/useStatus';
 

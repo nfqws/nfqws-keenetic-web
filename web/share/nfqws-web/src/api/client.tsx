@@ -1,4 +1,3 @@
-import { useAppStore } from '@/store/useAppStore';
 import { requestFn } from '@openapi-qraft/react';
 import type {
   OperationError,
@@ -20,6 +19,8 @@ import {
   type ServiceActionRequest,
   type StatusResponse,
 } from '@/api/schema';
+
+import { useAppStore } from '@/store/useAppStore';
 
 export const queryClient = new QueryClient({
   defaultOptions: {

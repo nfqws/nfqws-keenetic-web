@@ -3,8 +3,6 @@ import { create } from 'zustand';
 
 import { API } from '@/api/client';
 
-import { CONF_FILE_NAME } from '@/hooks/useFileContent';
-
 type AppStore = {
   auth: boolean;
   setAuth: (v: boolean) => void;
@@ -25,7 +23,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   auth: false,
   setAuth: (auth) => set({ auth }),
 
-  currentFile: CONF_FILE_NAME,
+  currentFile: 'main',
   setCurrentFile: (currentFile) => set({ currentFile }),
 
   needSave: false,

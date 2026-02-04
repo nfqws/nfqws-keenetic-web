@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useAppStore } from '@/store/useAppStore';
 import {
   Alert,
   Button,
@@ -12,6 +11,8 @@ import {
 import { useNavigate } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
+
+import { useAppStore } from '@/store/useAppStore';
 
 export const RemoveFileDialog = ({
   name,
@@ -26,6 +27,11 @@ export const RemoveFileDialog = ({
   const { currentFile } = useAppStore();
   const navigate = useNavigate();
 
+  const handleClose = useCallback(() => {
+    onClose();
+    setError(false);
+  }, [onClose]);
+
   const handleSubmit = useCallback(async () => {
     const { data } = await API.removeFile(name);
     if (data?.status === 0) {
@@ -37,12 +43,7 @@ export const RemoveFileDialog = ({
     } else {
       setError(true);
     }
-  }, [name]);
-
-  const handleClose = useCallback(() => {
-    onClose();
-    setError(false);
-  }, []);
+  }, [currentFile, handleClose, name, navigate]);
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm">

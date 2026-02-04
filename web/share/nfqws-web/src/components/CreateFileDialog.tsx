@@ -24,6 +24,12 @@ export const CreateFileDialog = ({
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
+  const handleClose = useCallback(() => {
+    onClose();
+    setName('');
+    setError(false);
+  }, [onClose]);
+
   const handleSubmit = useCallback(async () => {
     const { data } = await API.saveFile(`${name}.list`, '');
     if (data?.status === 0) {
@@ -33,13 +39,7 @@ export const CreateFileDialog = ({
     } else {
       setError(true);
     }
-  }, [name]);
-
-  const handleClose = useCallback(() => {
-    onClose();
-    setName('');
-    setError(false);
-  }, []);
+  }, [handleClose, name, navigate]);
 
   return (
     <Dialog
