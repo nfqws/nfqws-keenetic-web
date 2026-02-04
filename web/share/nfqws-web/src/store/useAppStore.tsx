@@ -1,8 +1,6 @@
 import type { EditorView } from '@codemirror/view';
 import { create } from 'zustand';
 
-import { API } from '@/api/client';
-
 type AppStore = {
   auth: boolean;
   setAuth: (v: boolean) => void;
@@ -17,9 +15,10 @@ type AppStore = {
   setEditorView: (v: EditorView | null) => void;
 
   onSave: () => Promise<void>;
+  setOnSave: (v: () => Promise<void>) => void;
 };
 
-export const useAppStore = create<AppStore>((set, get) => ({
+export const useAppStore = create<AppStore>((set) => ({
   auth: false,
   setAuth: (auth) => set({ auth }),
 
@@ -32,22 +31,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
   editorView: null,
   setEditorView: (editorView) => set({ editorView }),
 
-  onSave: async () => {
-    const { needSave, currentFile, editorView, setNeedSave } = get();
-    if (!needSave) {
-      return;
-    }
-
-    const text = editorView?.state.doc.toString();
-    if (text === undefined) {
-      return;
-    }
-
-    const { data } = await API.saveFile(currentFile, text);
-    if (data?.status === 0) {
-      setNeedSave(false);
-    } else {
-      // TODO: error
-    }
-  },
+  onSave: async () => {},
+  setOnSave: (onSave: () => Promise<void>) => set({ onSave }),
 }));

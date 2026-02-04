@@ -1,8 +1,7 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useState, type ChangeEvent } from 'react';
 import {
   Backdrop,
   Box,
-  Button,
   Checkbox,
   CircularProgress,
   FormControl,
@@ -15,6 +14,8 @@ import {
   type SelectChangeEvent,
 } from '@mui/material';
 import { createFileRoute } from '@tanstack/react-router';
+
+import { API } from '@/api/client';
 
 import { useAppStore } from '@/store/useAppStore';
 
@@ -32,9 +33,28 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   const { content: originalConfig, isPending } = useFileContent(CONF_FILE_NAME);
-  const { setCurrentFile, setNeedSave } = useAppStore();
+  const { setCurrentFile, setNeedSave, setOnSave, needSave } = useAppStore();
 
   const [form, setForm] = useState<NfqwsConfig | null>(null);
+
+  const onSave = useCallback(async () => {
+    if (!needSave) {
+      return;
+    }
+
+    if (originalConfig && form) {
+      const newConfig = formatConfig(originalConfig, form);
+      if (originalConfig !== newConfig) {
+        const { data } = await API.saveFile(CONF_FILE_NAME, newConfig);
+        if (data?.status === 0) {
+          void API.invalidateFileContent(CONF_FILE_NAME);
+          setNeedSave(false);
+        } else {
+          // TODO: error
+        }
+      }
+    }
+  }, [form, needSave, originalConfig, setNeedSave]);
 
   useEffect(() => {
     if (originalConfig) {
@@ -47,6 +67,10 @@ function RouteComponent() {
     setCurrentFile('main');
     setNeedSave(false);
   }, [setCurrentFile, setNeedSave]);
+
+  useEffect(() => {
+    setOnSave(onSave);
+  }, [onSave, setOnSave]);
 
   const changeHandler =
     (key: keyof NfqwsConfig, isCheckbox = false) =>
@@ -61,15 +85,9 @@ function RouteComponent() {
       const value = isCheckbox ? target.checked : target.value;
       setForm((prev) => {
         const newForm = prev ? { ...prev, [key]: value } : prev;
-
         if (originalConfig && newForm) {
-          console.warn(
-            'setNeedSave',
-            originalConfig !== formatConfig(originalConfig, newForm),
-          );
           setNeedSave(originalConfig !== formatConfig(originalConfig, newForm));
         }
-
         return newForm;
       });
     };
@@ -255,17 +273,6 @@ function RouteComponent() {
               />
             }
           />
-          <Button
-            onClick={() => {
-              if (originalConfig) {
-                const newConfig = formatConfig(originalConfig, form);
-                console.warn(originalConfig, newConfig);
-                console.warn(originalConfig === newConfig);
-              }
-            }}
-          >
-            Reload
-          </Button>
         </FormGroup>
       )}
     </Box>
