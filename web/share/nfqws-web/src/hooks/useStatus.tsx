@@ -27,7 +27,7 @@ export const useVersionCheck = () => {
     queryKey: ['version'],
     queryFn: async () => {
       const res = await fetch(
-        'https://api.github.com/repos/nfqws/nfqws2-xkeenetic/releases/latest',
+        'https://api.github.com/repos/nfqws/nfqws2-keenetic/releases/latest',
       );
       if (!res.ok) {
         return { tag_name: 'v0.0.0', html_url: '' };
