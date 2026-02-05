@@ -9,55 +9,49 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as FilenameRouteImport } from './routes/$filename'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TabChar123FilenameChar125RouteImport } from './routes/$tab.{-$filename}'
 
-const FilenameRoute = FilenameRouteImport.update({
-  id: '/$filename',
-  path: '/$filename',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TabChar123FilenameChar125Route =
+  TabChar123FilenameChar125RouteImport.update({
+    id: '/$tab/{-$filename}',
+    path: '/$tab/{-$filename}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$filename': typeof FilenameRoute
+  '/$tab/{-$filename}': typeof TabChar123FilenameChar125Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$filename': typeof FilenameRoute
+  '/$tab/{-$filename}': typeof TabChar123FilenameChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$filename': typeof FilenameRoute
+  '/$tab/{-$filename}': typeof TabChar123FilenameChar125Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$filename'
+  fullPaths: '/' | '/$tab/{-$filename}'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$filename'
-  id: '__root__' | '/' | '/$filename'
+  to: '/' | '/$tab/{-$filename}'
+  id: '__root__' | '/' | '/$tab/{-$filename}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  FilenameRoute: typeof FilenameRoute
+  TabChar123FilenameChar125Route: typeof TabChar123FilenameChar125Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/$filename': {
-      id: '/$filename'
-      path: '/$filename'
-      fullPath: '/$filename'
-      preLoaderRoute: typeof FilenameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -65,12 +59,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$tab/{-$filename}': {
+      id: '/$tab/{-$filename}'
+      path: '/$tab/{-$filename}'
+      fullPath: '/$tab/{-$filename}'
+      preLoaderRoute: typeof TabChar123FilenameChar125RouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  FilenameRoute: FilenameRoute,
+  TabChar123FilenameChar125Route: TabChar123FilenameChar125Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -18,15 +18,15 @@ export type FileInfo = {
   type: 'conf' | 'list' | 'log';
 };
 
-export function useFileNames() {
+export function useFileNames(type?: FileInfo['type']) {
   const { isPending, data, error } = API.listFiles();
 
   if (error) {
     throw error;
   }
 
-  const files: FileInfo[] =
-    data?.files.map((filename) => {
+  const files = (data?.files || [])
+    .map((filename) => {
       const isConf =
         filename.endsWith('.conf') ||
         filename.endsWith('.conf-opkg') ||
@@ -46,7 +46,8 @@ export function useFileNames() {
         removable: isRemovable,
         type: isConf ? 'conf' : isList ? 'list' : 'log',
       };
-    }) || [];
+    })
+    .filter((file) => !type || file.type === type) as FileInfo[];
 
   return {
     files,

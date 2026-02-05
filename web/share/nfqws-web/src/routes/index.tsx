@@ -41,7 +41,7 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   const { content: originalConfig, isPending } = useFileContent(CONF_FILE_NAME);
-  const { setCurrentFile, setNeedSave, needSave, setOnSave } = useAppStore();
+  const { setNeedSave, needSave, setOnSave } = useAppStore();
 
   const [originalConfigParsed, setOriginalConfigParsed] =
     useState<NfqwsConfig | null>(null);
@@ -90,9 +90,8 @@ function RouteComponent() {
   }, [originalConfig]);
 
   useEffect(() => {
-    setCurrentFile('main');
     setNeedSave(false);
-  }, [setCurrentFile, setNeedSave]);
+  }, [setNeedSave]);
 
   useEffect(() => {
     setOnSave(onSave);

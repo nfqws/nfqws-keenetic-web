@@ -7,23 +7,37 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { Box, IconButton, Tab, Tabs } from '@mui/material';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { CreateFileDialog } from '@/components/CreateFileDialog';
+import { type MainTabsValues } from '@/components/MainTabs';
 import { RemoveFileDialog } from '@/components/RemoveFileDialog';
 
 import { useAppStore } from '@/store/useAppStore';
 
 import { useFileNames } from '@/hooks/useFileNames';
 
+import { getFileTypeForTab } from '@/utils/getFileTypeForTab';
+
 export const FilesTabs = () => {
-  const { files } = useFileNames();
+  const { tab, filename } = useParams({ strict: false }) as {
+    tab?: MainTabsValues;
+    filename?: string;
+  };
+
+  const { files } = useFileNames(getFileTypeForTab(tab));
 
   const navigate = useNavigate();
-  const { currentFile, needSave } = useAppStore();
+  const { needSave } = useAppStore();
+
+  const currentTab = tab || 'settings';
+  const currentFile =
+    currentTab === 'settings' && !filename
+      ? 'config'
+      : filename || files[0]?.name;
 
   const [alertRedirect, setAlertRedirect] = useState('');
   const [createDialog, setCreateDialog] = useState(false);
@@ -44,10 +58,11 @@ export const FilesTabs = () => {
           <Tabs
             value={currentFile}
             onChange={(_, value) => {
+              const to = value === 'config' ? '/' : `/${currentTab}/${value}`;
               if (needSave) {
-                setAlertRedirect(value);
+                setAlertRedirect(to);
               } else {
-                void navigate({ to: value === 'main' ? '/' : `/${value}` });
+                void navigate({ to });
               }
             }}
             variant="scrollable"
@@ -57,24 +72,26 @@ export const FilesTabs = () => {
               flex: 1,
             }}
           >
-            <Tab
-              key="main"
-              value="main"
-              icon={<DisplaySettingsIcon fontSize="small" />}
-              iconPosition="start"
-              label="Config"
-              sx={{
-                minHeight: '50px',
-                fontSize: 14,
-                transition: 'color 0.1s ease-in-out',
-                '&.Mui-selected': {
-                  color: 'text.primary',
-                },
-                '&:hover': {
-                  color: 'text.primary',
-                },
-              }}
-            />
+            {(!tab || tab === 'settings') && (
+              <Tab
+                key="config"
+                value="config"
+                icon={<DisplaySettingsIcon fontSize="small" />}
+                iconPosition="start"
+                label="Config"
+                sx={{
+                  minHeight: '50px',
+                  fontSize: 14,
+                  transition: 'color 0.1s ease-in-out',
+                  '&.Mui-selected': {
+                    color: 'text.primary',
+                  },
+                  '&:hover': {
+                    color: 'text.primary',
+                  },
+                }}
+              />
+            )}
 
             {files.map(({ name, removable, editable, type }) => {
               let icon = undefined;
@@ -169,22 +186,24 @@ export const FilesTabs = () => {
           <></>
         )}
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            px: 1,
-          }}
-        >
-          <IconButton
-            size="small"
-            color="primary"
-            onClick={() => setCreateDialog(true)}
-            title="Create new file"
+        {tab === 'lists' && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              px: 1,
+            }}
           >
-            <AddOutlinedIcon fontSize="small" />
-          </IconButton>
-        </Box>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => setCreateDialog(true)}
+              title="Create new file"
+            >
+              <AddOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        )}
       </Box>
 
       <ConfirmationDialog
@@ -193,7 +212,7 @@ export const FilesTabs = () => {
         open={Boolean(alertRedirect)}
         onClose={() => setAlertRedirect('')}
         onSubmit={() => {
-          void navigate({ to: `/${alertRedirect}` });
+          void navigate({ to: alertRedirect });
           setAlertRedirect('');
         }}
       />

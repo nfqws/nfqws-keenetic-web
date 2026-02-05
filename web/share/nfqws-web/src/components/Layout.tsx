@@ -7,6 +7,7 @@ import { FilesTabs } from '@/components/FilesTabs';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { LoginDialog } from '@/components/LoginDialog';
+import { MainTabs } from '@/components/MainTabs';
 
 import { useAppStore } from '@/store/useAppStore';
 
@@ -113,6 +114,8 @@ export function Layout({ children }: { children: ReactNode }) {
           }}
         >
           <Header />
+
+          {auth && <MainTabs />}
 
           {auth && <FilesTabs />}
 
