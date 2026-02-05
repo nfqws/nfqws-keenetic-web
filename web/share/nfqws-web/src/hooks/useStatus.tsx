@@ -49,9 +49,9 @@ type UseStatusResult = {
   status: boolean;
   nfqws2: boolean;
   service: boolean;
-  version: string;
-  latest: string;
-  url: string;
+  version?: string;
+  latest?: string;
+  url?: string;
   updateAvailable: boolean;
   isPending: boolean;
 };
@@ -76,9 +76,9 @@ export const useStatus = (): UseStatusResult => {
         status: true,
         nfqws2: status.nfqws2,
         service: status.service,
-        version: `${current.join('.')}`,
-        latest: latest ? `${latest.version.join('.')}` : '0.0.0',
-        url: latest?.url || '',
+        version: current.join('.'),
+        latest: latest?.version.join('.'),
+        url: latest?.url,
         updateAvailable,
         isPending,
       };
@@ -88,9 +88,6 @@ export const useStatus = (): UseStatusResult => {
       status: isError || isPending,
       nfqws2: false,
       service: false,
-      version: '0.0.0',
-      latest: '0.0.0',
-      url: '',
       updateAvailable: false,
       isPending,
     };

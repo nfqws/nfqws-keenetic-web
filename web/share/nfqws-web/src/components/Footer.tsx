@@ -111,16 +111,18 @@ export const Footer = () => {
           )}
         </Stack>
 
-        {auth && (
+        {auth && version && (
           <Stack direction="row" spacing={1.5} alignItems="center">
             <Typography
               variant="body2"
               color="text.secondary"
               sx={{ ml: 1, fontSize: 15 }}
             >
-              {updateAvailable ? (
+              {version}
+              {updateAvailable && latest && (
                 <>
-                  {version} (
+                  {' '}
+                  (
                   <Link
                     href={url}
                     target="_blank"
@@ -136,8 +138,6 @@ export const Footer = () => {
                   </Link>
                   )
                 </>
-              ) : (
-                version
               )}
             </Typography>
           </Stack>
