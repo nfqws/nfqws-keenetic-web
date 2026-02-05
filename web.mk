@@ -31,7 +31,7 @@ _web-ipk:
 
 	# data.tar.gz
 	mkdir -p out/$(BUILD_DIR)/data$(ROOT_DIR)/share/www/nfqws
-	cp -r web/dist out/$(BUILD_DIR)/data$(ROOT_DIR)/share/www/nfqws
+	cp -r web/dist/. out/$(BUILD_DIR)/data$(ROOT_DIR)/share/www/nfqws
 	#sed -i -E "s#__VERSION__#v$(VERSION)#g" out/$(BUILD_DIR)/data$(ROOT_DIR)/share/www/nfqws/index.html
 
 	mkdir -p out/$(BUILD_DIR)/data$(ROOT_DIR)/etc/lighttpd/conf.d
@@ -49,7 +49,7 @@ _web-apk:
 	make _web-scripts
 
 	mkdir -p out/$(BUILD_DIR)/data$(ROOT_DIR)/www/nfqws
-	cp -r web/dist out/$(BUILD_DIR)/data$(ROOT_DIR)/www/nfqws
+	cp -r web/dist/. out/$(BUILD_DIR)/data$(ROOT_DIR)/www/nfqws
 	#sed -i -E "s#__VERSION__#v$(VERSION)#g" out/$(BUILD_DIR)/data$(ROOT_DIR)/www/nfqws/index.html
 
 	mkdir -p out/$(BUILD_DIR)/data$(ROOT_DIR)/etc/lighttpd/conf.d
