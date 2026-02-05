@@ -92,9 +92,15 @@ function getFiles(string $type = null): array
 function getFileContent(string $filename): string
 {
   if (preg_match('/\.(list|list-opkg|list-old)$/i', $filename)) {
-    return file_get_contents(ROOT_DIR . LISTS_DIR . '/' . basename($filename));
+    $path = ROOT_DIR . LISTS_DIR . '/' . basename($filename);
+  } else {
+    $path = ROOT_DIR . CONF_DIR . '/' . basename($filename);
   }
-  return file_get_contents(ROOT_DIR . CONF_DIR . '/' . basename($filename));
+
+  if (file_exists($path)) {
+    return file_get_contents($path);
+  }
+  return '';
 }
 
 function getLogContent(): string

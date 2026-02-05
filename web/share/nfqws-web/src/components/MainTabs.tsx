@@ -4,7 +4,7 @@ import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import { Box, Tab, Tabs } from '@mui/material';
 import { useNavigate, useParams } from '@tanstack/react-router';
 
-export type MainTabsValues = 'settings' | 'lists' | 'logs';
+import { mainTabsValues, type MainTabsValues } from '@/types/types';
 
 export const MainTabs = () => {
   const navigate = useNavigate();
@@ -12,6 +12,12 @@ export const MainTabs = () => {
   const { tab } = useParams({ strict: false }) as {
     tab?: MainTabsValues;
   };
+
+  const currentTab = !tab
+    ? 'settings'
+    : mainTabsValues.includes(tab)
+      ? tab
+      : false;
 
   return (
     <>
@@ -24,7 +30,7 @@ export const MainTabs = () => {
         }}
       >
         <Tabs
-          value={tab || 'settings'}
+          value={currentTab}
           onChange={(_, value) => {
             void navigate({ to: value === 'settings' ? '/' : `/${value}` });
           }}

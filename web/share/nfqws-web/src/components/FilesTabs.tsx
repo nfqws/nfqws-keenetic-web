@@ -11,9 +11,10 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 
+import type { MainTabsValues } from '@/types/types';
+
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { CreateFileDialog } from '@/components/CreateFileDialog';
-import { type MainTabsValues } from '@/components/MainTabs';
 
 import { useAppStore } from '@/store/useAppStore';
 
@@ -30,13 +31,17 @@ export const FilesTabs = () => {
   const navigate = useNavigate();
   const { auth, needSave } = useAppStore();
 
-  const { files, isPending } = useFileNames(getFileTypeForTab(tab));
+  const { files, isPending, findFile } = useFileNames(getFileTypeForTab(tab));
 
   const currentTab = tab || 'settings';
-  const currentFile =
-    currentTab === 'settings' && !filename
+
+  const currentFile = !filename
+    ? currentTab === 'settings'
       ? 'config'
-      : filename || files[0]?.name;
+      : files[0]?.name
+    : findFile(filename)
+      ? filename
+      : false;
 
   const [alertRedirect, setAlertRedirect] = useState('');
   const [createDialog, setCreateDialog] = useState(false);

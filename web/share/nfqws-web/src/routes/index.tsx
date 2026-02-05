@@ -22,6 +22,8 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 
+import { App } from '@/components/App';
+import { Error404 } from '@/components/Error404';
 import { FormEditor } from '@/components/FormEditor';
 
 import { useAppStore } from '@/store/useAppStore';
@@ -36,6 +38,7 @@ import {
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
+  notFoundComponent: Error404,
 });
 
 function RouteComponent() {
@@ -121,166 +124,168 @@ function RouteComponent() {
     };
 
   if (isPending || !originalConfigParsed || !form) {
-    return <></>;
+    return <App />;
   }
 
   return (
-    <Box
-      flex={1}
-      sx={{
-        position: 'relative',
-        display: 'flex',
-        overflowY: 'auto',
-      }}
-    >
-      <FormGroup
+    <App>
+      <Box
+        flex={1}
         sx={{
-          padding: 3,
-          gap: 4,
-          width: '100%',
-          flex: 1,
-          position: 'absolute',
-          '& .MuiInputBase-root': {
-            fontFamily: (theme) => theme.typography.mono.fontFamily,
-            fontSize: 14,
-          },
-          '& .MuiInputBase-input': {
-            fontFamily: (theme) => theme.typography.mono.fontFamily,
-            fontSize: 13,
-          },
-          '& .MuiFormLabel-root': {
-            fontSize: 13,
-          },
-          '& .MuiFormControlLabel-label': {
-            fontSize: 14,
-          },
-          '& .MuiInputLabel-shrink': {
-            transform: 'translate(14px, -9px) scale(0.95)',
-          },
+          position: 'relative',
+          display: 'flex',
+          overflowY: 'auto',
         }}
       >
-        <TextField
-          id="ISP_INTERFACE"
-          label="Network interface"
-          fullWidth
-          value={form.ISP_INTERFACE}
-          onChange={changeHandler('ISP_INTERFACE')}
-          spellCheck={false}
-        />
-
-        {nfqws2 && (
-          <FormEditor
-            label="Startup arguments"
-            value={originalConfigParsed.NFQWS_BASE_ARGS}
-            onChange={changeHandler('NFQWS_BASE_ARGS')}
-          />
-        )}
-
-        <FormEditor
-          label="Base strategy"
-          value={originalConfigParsed.NFQWS_ARGS}
-          onChange={changeHandler('NFQWS_ARGS')}
-        />
-
-        <FormEditor
-          label="Quic strategy"
-          value={originalConfigParsed.NFQWS_ARGS_QUIC}
-          onChange={changeHandler('NFQWS_ARGS_QUIC')}
-        />
-
-        <FormEditor
-          label="UDP strategy"
-          value={originalConfigParsed.NFQWS_ARGS_UDP}
-          onChange={changeHandler('NFQWS_ARGS_UDP')}
-        />
-
-        <FormEditor
-          label="Custom strategy"
-          value={originalConfigParsed.NFQWS_ARGS_CUSTOM}
-          onChange={changeHandler('NFQWS_ARGS_CUSTOM')}
-        />
-
-        <FormEditor
-          label="IPSET arguments"
-          value={originalConfigParsed.NFQWS_ARGS_IPSET}
-          onChange={changeHandler('NFQWS_ARGS_IPSET')}
-        />
-
-        <FormControl fullWidth>
-          <InputLabel>Mode</InputLabel>
-          <Select
-            id="NFQWS_EXTRA_ARGS"
-            label="Mode"
-            value={form.NFQWS_EXTRA_ARGS}
+        <FormGroup
+          sx={{
+            padding: 3,
+            gap: 4,
+            width: '100%',
+            flex: 1,
+            position: 'absolute',
+            '& .MuiInputBase-root': {
+              fontFamily: (theme) => theme.typography.mono.fontFamily,
+              fontSize: 14,
+            },
+            '& .MuiInputBase-input': {
+              fontFamily: (theme) => theme.typography.mono.fontFamily,
+              fontSize: 13,
+            },
+            '& .MuiFormLabel-root': {
+              fontSize: 13,
+            },
+            '& .MuiFormControlLabel-label': {
+              fontSize: 14,
+            },
+            '& .MuiInputLabel-shrink': {
+              transform: 'translate(14px, -9px) scale(0.95)',
+            },
+          }}
+        >
+          <TextField
+            id="ISP_INTERFACE"
+            label="Network interface"
             fullWidth
-            sx={{ minWidth: 120 }}
-            onChange={changeHandler('NFQWS_EXTRA_ARGS')}
-          >
-            <MenuItem value="MODE_AUTO">Auto</MenuItem>
-            <MenuItem value="MODE_LIST">List</MenuItem>
-            <MenuItem value="MODE_ALL">All</MenuItem>
-          </Select>
-        </FormControl>
-        <TextField
-          id="TCP_PORTS"
-          label="TCP ports"
-          minRows={2}
-          fullWidth
-          value={form.TCP_PORTS}
-          onChange={changeHandler('TCP_PORTS')}
-          spellCheck={false}
-        />
-        <TextField
-          id="UDP_PORTS"
-          label="UDP ports"
-          minRows={2}
-          fullWidth
-          value={form.UDP_PORTS}
-          onChange={changeHandler('UDP_PORTS')}
-          spellCheck={false}
-        />
-        <TextField
-          id="POLICY_NAME"
-          label="Policy name"
-          fullWidth
-          value={form.POLICY_NAME}
-          onChange={changeHandler('POLICY_NAME')}
-          spellCheck={false}
-        />
-        <FormControlLabel
-          label="Policy exclude mode"
-          control={
-            <Checkbox
-              id="POLICY_EXCLUDE"
-              checked={form.POLICY_EXCLUDE}
-              onChange={changeHandler('POLICY_EXCLUDE', true)}
+            value={form.ISP_INTERFACE}
+            onChange={changeHandler('ISP_INTERFACE')}
+            spellCheck={false}
+          />
+
+          {nfqws2 && (
+            <FormEditor
+              label="Startup arguments"
+              value={originalConfigParsed.NFQWS_BASE_ARGS}
+              onChange={changeHandler('NFQWS_BASE_ARGS')}
             />
-          }
-          sx={{ mt: '-1em' }}
-        />
-        <FormControlLabel
-          label="IPv6 enabled"
-          control={
-            <Checkbox
-              id="IPV6_ENABLED"
-              checked={form.IPV6_ENABLED}
-              onChange={changeHandler('IPV6_ENABLED', true)}
-            />
-          }
-          sx={{ mt: '-1em' }}
-        />
-        <FormControlLabel
-          label="Debug logging"
-          control={
-            <Checkbox
-              id="LOG_LEVEL"
-              checked={form.LOG_LEVEL}
-              onChange={changeHandler('LOG_LEVEL', true)}
-            />
-          }
-          sx={{ mt: '-1em' }}
-        />
-      </FormGroup>
-    </Box>
+          )}
+
+          <FormEditor
+            label="Base strategy"
+            value={originalConfigParsed.NFQWS_ARGS}
+            onChange={changeHandler('NFQWS_ARGS')}
+          />
+
+          <FormEditor
+            label="Quic strategy"
+            value={originalConfigParsed.NFQWS_ARGS_QUIC}
+            onChange={changeHandler('NFQWS_ARGS_QUIC')}
+          />
+
+          <FormEditor
+            label="UDP strategy"
+            value={originalConfigParsed.NFQWS_ARGS_UDP}
+            onChange={changeHandler('NFQWS_ARGS_UDP')}
+          />
+
+          <FormEditor
+            label="Custom strategy"
+            value={originalConfigParsed.NFQWS_ARGS_CUSTOM}
+            onChange={changeHandler('NFQWS_ARGS_CUSTOM')}
+          />
+
+          <FormEditor
+            label="IPSET arguments"
+            value={originalConfigParsed.NFQWS_ARGS_IPSET}
+            onChange={changeHandler('NFQWS_ARGS_IPSET')}
+          />
+
+          <FormControl fullWidth>
+            <InputLabel>Mode</InputLabel>
+            <Select
+              id="NFQWS_EXTRA_ARGS"
+              label="Mode"
+              value={form.NFQWS_EXTRA_ARGS}
+              fullWidth
+              sx={{ minWidth: 120 }}
+              onChange={changeHandler('NFQWS_EXTRA_ARGS')}
+            >
+              <MenuItem value="MODE_AUTO">Auto</MenuItem>
+              <MenuItem value="MODE_LIST">List</MenuItem>
+              <MenuItem value="MODE_ALL">All</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            id="TCP_PORTS"
+            label="TCP ports"
+            minRows={2}
+            fullWidth
+            value={form.TCP_PORTS}
+            onChange={changeHandler('TCP_PORTS')}
+            spellCheck={false}
+          />
+          <TextField
+            id="UDP_PORTS"
+            label="UDP ports"
+            minRows={2}
+            fullWidth
+            value={form.UDP_PORTS}
+            onChange={changeHandler('UDP_PORTS')}
+            spellCheck={false}
+          />
+          <TextField
+            id="POLICY_NAME"
+            label="Policy name"
+            fullWidth
+            value={form.POLICY_NAME}
+            onChange={changeHandler('POLICY_NAME')}
+            spellCheck={false}
+          />
+          <FormControlLabel
+            label="Policy exclude mode"
+            control={
+              <Checkbox
+                id="POLICY_EXCLUDE"
+                checked={form.POLICY_EXCLUDE}
+                onChange={changeHandler('POLICY_EXCLUDE', true)}
+              />
+            }
+            sx={{ mt: '-1em' }}
+          />
+          <FormControlLabel
+            label="IPv6 enabled"
+            control={
+              <Checkbox
+                id="IPV6_ENABLED"
+                checked={form.IPV6_ENABLED}
+                onChange={changeHandler('IPV6_ENABLED', true)}
+              />
+            }
+            sx={{ mt: '-1em' }}
+          />
+          <FormControlLabel
+            label="Debug logging"
+            control={
+              <Checkbox
+                id="LOG_LEVEL"
+                checked={form.LOG_LEVEL}
+                onChange={changeHandler('LOG_LEVEL', true)}
+              />
+            }
+            sx={{ mt: '-1em' }}
+          />
+        </FormGroup>
+      </Box>
+    </App>
   );
 }

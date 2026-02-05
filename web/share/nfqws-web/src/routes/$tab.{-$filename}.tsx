@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 
+import { mainTabsValues } from '@/types/types';
+
+import { App } from '@/components/App';
 import { Editor } from '@/components/Editor';
+import { Error404 } from '@/components/Error404';
 
 import { useAppStore } from '@/store/useAppStore';
 
@@ -13,6 +17,15 @@ import { getFileTypeForTab } from '@/utils/getFileTypeForTab';
 
 export const Route = createFileRoute('/$tab/{-$filename}')({
   component: RouteComponent,
+  notFoundComponent: Error404,
+  params: {
+    parse: (params) => {
+      if (!mainTabsValues.includes(params.tab)) {
+        throw notFound();
+      }
+      return params;
+    },
+  },
 });
 
 function RouteComponent() {
@@ -24,8 +37,11 @@ function RouteComponent() {
     files,
   } = useFileNames(getFileTypeForTab(tab));
 
-  const currentFile =
-    tab === 'settings' && !filename ? 'config' : filename || files[0]?.name;
+  const currentFile = !filename
+    ? files[0]?.name
+    : findFile(filename)
+      ? filename
+      : false;
 
   const { data: originalContent, isPending } = API.fileContent(
     currentFile,
@@ -69,21 +85,21 @@ function RouteComponent() {
     setOnSave(onSave);
   }, [onSave, setOnSave]);
 
-  if (!fileInfo) {
-    return <></>;
-  }
-
   return (
-    <Editor
-      value={originalContent?.content ?? ''}
-      type={fileInfo.type}
-      readonly={isPending || isPendingNames || fileInfo?.type === 'log'}
-      onChange={(value, changed) => {
-        setNeedSave(changed);
-        setContent(value);
-      }}
-      onSave={onSave}
-      sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-    />
+    <App>
+      {fileInfo && (
+        <Editor
+          value={originalContent?.content ?? ''}
+          type={fileInfo.type}
+          readonly={isPending || isPendingNames || fileInfo?.type === 'log'}
+          onChange={(value, changed) => {
+            setNeedSave(changed);
+            setContent(value);
+          }}
+          onSave={onSave}
+          sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        />
+      )}
+    </App>
   );
 }

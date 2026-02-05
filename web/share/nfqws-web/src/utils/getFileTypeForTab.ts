@@ -1,6 +1,6 @@
 import type { FilenamesRequest } from '@/api/schema';
 
-import type { MainTabsValues } from '@/components/MainTabs';
+import type { MainTabsValues } from '@/types/types';
 
 export const getFileTypeForTab = (
   tab?: MainTabsValues,
