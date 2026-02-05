@@ -20,6 +20,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { useParams } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 import { type ServiceActionRequest } from '@/api/schema';
@@ -38,9 +39,13 @@ export const Header = () => {
 
   const config = useConfig(nfqws2);
 
-  const { needSave, onSave, setCheckDomainsList, currentFile } = useAppStore();
+  const { needSave, onSave, setCheckDomainsList } = useAppStore();
 
   const [output, setOutput] = useState<boolean | string>(false);
+
+  const { filename } = useParams({ strict: false }) as {
+    filename?: string;
+  };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -63,22 +68,32 @@ export const Header = () => {
       <Box
         sx={{
           px: 3,
-          py: 2,
+          py: 1,
           borderBottom: '1px solid',
           borderColor: 'divider',
           backgroundColor: 'background.paper',
           whiteSpace: 'nowrap',
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" spacing={1.5} alignItems="baseline">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          flexWrap="wrap"
+        >
+          <Stack direction="row" spacing={1.5} alignItems="baseline" py={1}>
             <Typography
               component="h2"
               fontFamily={'Vendor Logo, Roboto, sans-serif'}
               textTransform="uppercase"
               color="primary.main"
-              fontSize={20}
+              fontSize="1.25em"
               lineHeight={1}
+              sx={{
+                '@media (max-width: 380px)': {
+                  fontSize: '1em',
+                },
+              }}
             >
               Keenetic
             </Typography>
@@ -87,8 +102,13 @@ export const Header = () => {
               fontFamily={'Device Model, Roboto, sans-serif'}
               textTransform="uppercase"
               color="textPrimary"
-              fontSize={18}
+              fontSize="1.131em"
               lineHeight={1}
+              sx={{
+                '@media (max-width: 380px)': {
+                  fontSize: '0.91em',
+                },
+              }}
             >
               {config.title}
             </Typography>
@@ -96,25 +116,39 @@ export const Header = () => {
             {service ? (
               <CloudDoneIcon
                 sx={{
-                  fontSize: 20,
+                  fontSize: '1.25em',
                   color: 'success.main',
                   alignSelf: 'center',
                   opacity: 0.9,
+                  '@media (max-width: 380px)': {
+                    fontSize: '1em',
+                  },
                 }}
               />
             ) : (
               <CloudOffIcon
                 sx={{
-                  fontSize: 20,
+                  fontSize: '1.25em',
                   color: 'error.main',
                   alignSelf: 'center',
                   opacity: 0.9,
+                  '@media (max-width: 380px)': {
+                    fontSize: '1em',
+                  },
                 }}
               />
             )}
           </Stack>
 
-          <Stack direction="row" spacing={2}>
+          <Stack
+            direction="row"
+            spacing={2}
+            py={1}
+            sx={{
+              marginLeft: 'auto',
+              justifyContent: 'flex-end',
+            }}
+          >
             <Button
               variant="outlined"
               size="small"
@@ -122,7 +156,7 @@ export const Header = () => {
               color="success"
               onClick={() =>
                 setCheckDomainsList(
-                  currentFile.endsWith('.list') ? currentFile : 'user.list',
+                  filename?.endsWith('.list') ? filename : 'user.list',
                 )
               }
             >
