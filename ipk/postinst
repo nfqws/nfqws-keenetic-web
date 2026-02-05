@@ -3,8 +3,7 @@
 # Fix conflict with keenetic webdav server: https://github.com/Entware/entware-packages/pull/27
 sed -i -E "s/^PROCS=lighttpd$/PROCS=\/opt\/sbin\/lighttpd/" /opt/etc/init.d/S80lighttpd
 
-/opt/etc/init.d/S80lighttpd start
-/opt/etc/init.d/S80lighttpd reconfigure
+/opt/etc/init.d/S80lighttpd restart
 
 ip_addr=$(ip -f inet addr show dev br0 2>/dev/null | grep inet | sed -n 's/.*inet \([0-9.]\+\).*/\1/p')
 echo "NFQWS2 Web Interface installed: http://$ip_addr:90"

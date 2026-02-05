@@ -1,7 +1,6 @@
 #!/bin/sh
 
-/etc/init.d/lighttpd start
-/etc/init.d/lighttpd reload
+/etc/init.d/lighttpd restart
 
 ip_addr=$(ip -f inet addr show dev br-lan 2>/dev/null | grep inet | sed -n 's/.*inet \([0-9.]\+\).*/\1/p')
 echo "NFQWS2 Web Interface installed: http://$ip_addr:90"
