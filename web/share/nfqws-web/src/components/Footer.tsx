@@ -9,7 +9,6 @@ import { useAppStore } from '@/store/useAppStore';
 import { useStatus } from '@/hooks/useStatus';
 
 export const Footer = () => {
-  // TODO: Не рисовать версию если ее нет
   const { version, latest, updateAvailable, url } = useStatus();
 
   const { auth } = useAppStore();
