@@ -28,11 +28,11 @@ jobs:
           node-version: '24.x'
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable && yarn cache clean
         working-directory: ./web
 
       - name: Build
-        run: yarn build
+        run: yarn openapi && yarn build
         working-directory: ./web
 
       - name: Upload files
