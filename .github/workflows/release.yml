@@ -73,7 +73,7 @@ jobs:
         merge-multiple: true
 
     - name: Display artifacts
-      run: ls ./out
+      run: ls ./web/dist
 
     - name: Init SDK
       working-directory: /builder
@@ -140,7 +140,7 @@ jobs:
         merge-multiple: true
 
     - name: Display artifacts
-      run: ls ./out
+      run: ls ./web/dist
 
     - name: Build entware web
       run: make web-entware
