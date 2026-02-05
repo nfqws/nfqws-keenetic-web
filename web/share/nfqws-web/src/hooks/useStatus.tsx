@@ -85,7 +85,7 @@ export const useStatus = (): UseStatusResult => {
     }
 
     return {
-      status: false,
+      status: isError || isPending,
       nfqws2: false,
       service: false,
       version: '0.0.0',
