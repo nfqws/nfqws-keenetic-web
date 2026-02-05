@@ -4,6 +4,7 @@ type AppConfig = {
   confFile: string;
   title: string;
   updateUrl: string;
+  webUpdateUrl: string;
 };
 
 const nfqws1Config: AppConfig = {
@@ -11,6 +12,8 @@ const nfqws1Config: AppConfig = {
   title: 'NFQWS',
   updateUrl:
     'https://api.github.com/repos/Anonym-tsk/nfqws-keenetic/releases/latest',
+  webUpdateUrl:
+    'https://api.github.com/repos/nfqws/nfqws-keenetic-web/releases/latest',
 } as const;
 
 const nfqws2Config: AppConfig = {
@@ -18,6 +21,8 @@ const nfqws2Config: AppConfig = {
   title: 'NFQWS 2',
   updateUrl:
     'https://api.github.com/repos/nfqws/nfqws2-keenetic/releases/latest',
+  webUpdateUrl:
+    'https://api.github.com/repos/nfqws/nfqws-keenetic-web/releases/latest',
 } as const;
 
 export const useConfig = (nfqws2: boolean): AppConfig => {

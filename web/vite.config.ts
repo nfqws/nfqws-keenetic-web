@@ -5,8 +5,13 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+const APP_VERSION = fs.readFileSync('../VERSION', 'utf8').trim();
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
+  define: {
+    'process.env.APP_VERSION': JSON.stringify(APP_VERSION),
+  },
   server:
     mode === 'staging'
       ? {

@@ -6,7 +6,7 @@ import { API } from '@/api/client';
 
 type Version = [number, number, number];
 
-function compareVersions(current: Version, latest: Version) {
+export function compareVersions(current: Version, latest: Version) {
   const v1 = latest[0] - current[0];
   const v2 = latest[1] - current[1];
   const v3 = latest[2] - current[2];
@@ -23,14 +23,12 @@ const parseVersion = (version: string | undefined | null): Version => {
     : [0, 0, 0];
 };
 
-export const useVersionCheck = (nfqws2 = false, enabled = true) => {
-  const config = useConfig(nfqws2);
-
+export const useVersionCheck = (url: string, enabled = true) => {
   return useQuery({
-    queryKey: ['version', nfqws2],
+    queryKey: ['version', url],
     enabled,
     queryFn: async () => {
-      const res = await fetch(config.updateUrl);
+      const res = await fetch(url);
       if (!res.ok) {
         return { tag_name: 'v0.0.0', html_url: '' };
       }
@@ -49,37 +47,45 @@ type UseStatusResult = {
   status: boolean;
   nfqws2: boolean;
   service: boolean;
-  version?: string;
-  latest?: string;
+  version?: Version;
+  webVersion?: Version;
+  latest?: Version;
+  webLatest?: Version;
   url?: string;
-  updateAvailable: boolean;
+  webUrl?: string;
   isPending: boolean;
 };
 
 export const useStatus = (): UseStatusResult => {
   const { data: status, isPending, isError } = API.status();
+
+  const { updateUrl, webUpdateUrl } = useConfig(status?.nfqws2 ?? false);
+
   const { data: latest } = useVersionCheck(
-    status?.nfqws2 ?? false,
+    updateUrl,
+    status?.status === 0 && !isPending && !isError,
+  );
+
+  const { data: latestWeb } = useVersionCheck(
+    webUpdateUrl,
     status?.status === 0 && !isPending && !isError,
   );
 
   return useMemo(() => {
     if (!isError && !isPending && status?.status === 0) {
       const current = parseVersion(status.version);
-
-      let updateAvailable = false;
-      if (latest) {
-        updateAvailable = compareVersions(current, latest.version);
-      }
+      const currentWeb = parseVersion(process.env.APP_VERSION);
 
       return {
         status: true,
         nfqws2: status.nfqws2,
         service: status.service,
-        version: current.join('.'),
-        latest: latest?.version.join('.'),
+        version: current,
+        webVersion: currentWeb,
+        latest: latest?.version,
+        webLatest: latestWeb?.version,
         url: latest?.url,
-        updateAvailable,
+        webUrl: latestWeb?.url,
         isPending,
       };
     }
@@ -91,5 +97,5 @@ export const useStatus = (): UseStatusResult => {
       updateAvailable: false,
       isPending,
     };
-  }, [latest, status, isPending, isError]);
+  }, [isError, isPending, latest, latestWeb, status]);
 };

@@ -2,17 +2,15 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import { Box, Link, Stack, Typography, useColorScheme } from '@mui/material';
+import { Box, Link, Stack, useColorScheme } from '@mui/material';
 
 import { API } from '@/api/client';
 
+import { FooterVersion } from '@/components/FooterVersion';
+
 import { useAppStore } from '@/store/useAppStore';
 
-import { useStatus } from '@/hooks/useStatus';
-
 export const Footer = () => {
-  const { version, latest, updateAvailable, url } = useStatus();
-
   const { auth } = useAppStore();
 
   const { mode, setMode } = useColorScheme();
@@ -141,37 +139,7 @@ export const Footer = () => {
           )}
         </Stack>
 
-        {auth && version && (
-          <Stack direction="row" spacing={1.5} alignItems="center">
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ ml: 1, fontSize: 15 }}
-            >
-              {version}
-              {updateAvailable && latest && (
-                <>
-                  {' '}
-                  (
-                  <Link
-                    href={url}
-                    target="_blank"
-                    underline="none"
-                    color="text.secondary"
-                    sx={{
-                      '&:hover': {
-                        color: 'primary.main',
-                      },
-                    }}
-                  >
-                    {latest}
-                  </Link>
-                  )
-                </>
-              )}
-            </Typography>
-          </Stack>
-        )}
+        <FooterVersion />
       </Box>
     </Box>
   );
