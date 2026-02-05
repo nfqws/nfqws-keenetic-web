@@ -36,7 +36,6 @@ jobs:
         working-directory: ./web
 
       - name: Upload files
-        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: web
