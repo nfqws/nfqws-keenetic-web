@@ -29,7 +29,7 @@ export const FilesTabs = () => {
   };
 
   const navigate = useNavigate();
-  const { auth, needSave } = useAppStore();
+  const { needSave } = useAppStore();
 
   const { files, isPending, findFile } = useFileNames(getFileTypeForTab(tab));
 
@@ -48,7 +48,7 @@ export const FilesTabs = () => {
   const [removeDialog, setRemoveDialog] = useState('');
   const [clearDialog, setClearDialog] = useState('');
 
-  return isPending || !auth ? (
+  return isPending ? (
     <Box
       sx={{
         borderBottom: '1px solid',

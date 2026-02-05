@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Backdrop, Box, CircularProgress } from '@mui/material';
+import { Backdrop, Box, CircularProgress, Typography } from '@mui/material';
 
 import { CheckDomainsDialog } from '@/components/CheckDomainsDialog';
 import { FilesTabs } from '@/components/FilesTabs';
@@ -15,8 +15,8 @@ import { useStatus } from '@/hooks/useStatus';
 export function App({ children }: { children?: ReactNode }) {
   const { auth, checkDomainsList, setCheckDomainsList } = useAppStore();
 
-  // prefetch
-  const { isPending } = useStatus();
+  const { isPending, status } = useStatus();
+  const nfqwsInstalled = isPending || status;
 
   return (
     <>
@@ -24,12 +24,18 @@ export function App({ children }: { children?: ReactNode }) {
 
       <MainTabs />
 
-      <FilesTabs />
+      {nfqwsInstalled && auth && <FilesTabs />}
 
       <Box flex={1} sx={{ display: 'flex', position: 'relative' }}>
-        {auth === undefined || isPending ? (
+        {auth === undefined || isPending || !nfqwsInstalled ? (
           <Backdrop open={true}>
-            <CircularProgress color="inherit" />
+            {nfqwsInstalled ? (
+              <CircularProgress color="inherit" />
+            ) : (
+              <Typography variant="subtitle1" color="text.primary">
+                NFQWS is not installed
+              </Typography>
+            )}
           </Backdrop>
         ) : auth ? (
           children

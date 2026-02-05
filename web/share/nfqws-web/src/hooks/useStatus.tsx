@@ -46,6 +46,7 @@ export const useVersionCheck = (nfqws2 = false, enabled = true) => {
 };
 
 type UseStatusResult = {
+  status: boolean;
   nfqws2: boolean;
   service: boolean;
   version: string;
@@ -72,6 +73,7 @@ export const useStatus = (): UseStatusResult => {
       }
 
       return {
+        status: true,
         nfqws2: status.nfqws2,
         service: status.service,
         version: `${current.join('.')}`,
@@ -83,6 +85,7 @@ export const useStatus = (): UseStatusResult => {
     }
 
     return {
+      status: false,
       nfqws2: false,
       service: false,
       version: '0.0.0',

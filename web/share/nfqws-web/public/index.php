@@ -2,8 +2,6 @@
 
 ini_set('memory_limit', '32M');
 
-// TODO: Проверить что nfqws вообще установлен
-
 define('NFQWS2', file_exists('/opt/usr/bin/nfqws2') || file_exists('/usr/bin/nfqws2'));
 define('ROOT_DIR', (file_exists('/opt/usr/bin/nfqws2') || file_exists('/opt/usr/bin/nfqws')) ? '/opt' : '');
 const SCRIPT_NAME = ROOT_DIR ? (NFQWS2 ? 'S51nfqws2' : 'S51nfqws') : (NFQWS2 ? 'nfqws2-keenetic' : 'nfqws-keenetic');
@@ -138,11 +136,17 @@ function removeFile(string $filename): bool
   }
 }
 
-function nfqwsServiceStatus(): bool
+function nfqwsServiceStatus(): array
 {
   $output = null;
-  exec(ROOT_DIR . "/etc/init.d/" . SCRIPT_NAME . " status", $output);
-  return str_contains($output[0] ?? '', 'is running');
+  $path = ROOT_DIR . "/etc/init.d/" . SCRIPT_NAME;
+  if (!file_exists($path)) {
+    return array('service' => false, 'status' => 1);
+  }
+
+  exec($path . " status", $output);
+  $running = str_contains($output[0] ?? '', 'is running');
+  return array('service' => $running, 'status' => 0);
 }
 
 function nfqwsServiceAction(string $action): array
@@ -240,7 +244,8 @@ function main(): void
 
   switch ($_POST['cmd']) {
     case 'status':
-      $response = array('status' => 0, 'service' => nfqwsServiceStatus(), 'nfqws2' => NFQWS2, 'version' => nfqwsInstalledVersion());
+      $status = nfqwsServiceStatus();
+      $response = array('status' => $status['status'], 'service' => $status['service'], 'nfqws2' => NFQWS2, 'version' => nfqwsInstalledVersion());
       break;
 
     case 'filenames':
