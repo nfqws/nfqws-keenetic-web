@@ -115,9 +115,9 @@ export function Layout({ children }: { children: ReactNode }) {
         >
           <Header />
 
-          {auth && <MainTabs />}
+          <MainTabs />
 
-          {auth && <FilesTabs />}
+          <FilesTabs />
 
           <Box flex={1} sx={{ display: 'flex', position: 'relative' }}>
             {auth ? children : <LoginDialog />}

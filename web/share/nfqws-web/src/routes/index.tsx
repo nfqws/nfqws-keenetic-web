@@ -36,8 +36,6 @@ import {
   type NfqwsConfig,
 } from '@/utils/configParser';
 
-// TODO: Везде скелетоны
-
 export const Route = createFileRoute('/')({
   component: RouteComponent,
 });
