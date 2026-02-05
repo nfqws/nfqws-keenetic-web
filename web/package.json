@@ -7,7 +7,7 @@
     "postinstall": "husky",
     "start": "vite --mode staging",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build && tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
     "openapi": "openapi-qraft --redocly apis.yaml && prettier --write 'src/api/**/*.{ts,tsx}'",
