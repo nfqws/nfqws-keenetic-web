@@ -81,7 +81,14 @@ export const Header = () => {
           justifyContent="space-between"
           flexWrap="wrap"
         >
-          <Stack direction="row" spacing={1.5} alignItems="baseline" py={1}>
+          <Stack
+            direction="row"
+            spacing={1.5}
+            alignItems="baseline"
+            py={1}
+            mr={2}
+            flexGrow={1000}
+          >
             <Typography
               component="h2"
               fontFamily={'Vendor Logo, Roboto, sans-serif'}
@@ -144,10 +151,8 @@ export const Header = () => {
             direction="row"
             spacing={2}
             py={1}
-            sx={{
-              marginLeft: 'auto',
-              justifyContent: 'flex-end',
-            }}
+            flexGrow={1}
+            justifyContent="flex-end"
           >
             <Button
               variant="outlined"
@@ -174,7 +179,12 @@ export const Header = () => {
               Save
             </Button>
 
-            <Stack direction="row" alignItems="center">
+            <Stack
+              direction="row"
+              alignItems="center"
+              flexGrow={1}
+              justifyContent="flex-end"
+            >
               <IconButton
                 size="small"
                 onClick={handleMenuOpen}
