@@ -1,6 +1,8 @@
-import { LogoutOutlined } from '@mui/icons-material';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Box, Link, Stack, Typography } from '@mui/material';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { Box, Link, Stack, Typography, useColorScheme } from '@mui/material';
 
 import { API } from '@/api/client';
 
@@ -12,6 +14,8 @@ export const Footer = () => {
   const { version, latest, updateAvailable, url } = useStatus();
 
   const { auth } = useAppStore();
+
+  const { mode, setMode } = useColorScheme();
 
   return (
     <Box
@@ -85,6 +89,31 @@ export const Footer = () => {
             web
           </Link>
 
+          <Link
+            component="button"
+            color="text.secondary"
+            title="Change theme"
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 0.85,
+              fontSize: 15,
+              lineHeight: 1,
+              '&:hover': {
+                color: 'primary.main',
+              },
+            }}
+            onClick={() => {
+              setMode(mode === 'light' ? 'dark' : 'light');
+            }}
+          >
+            {mode === 'light' ? (
+              <DarkModeIcon sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+            ) : (
+              <LightModeIcon sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+            )}
+          </Link>
+
           {auth && (
             <Link
               component="button"
@@ -105,7 +134,9 @@ export const Footer = () => {
                 void API.invalidateStatus();
               }}
             >
-              <LogoutOutlined sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+              <LogoutOutlinedIcon
+                sx={{ fontSize: '1.2em', alignSelf: 'center' }}
+              />
             </Link>
           )}
         </Stack>

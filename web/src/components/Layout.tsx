@@ -83,7 +83,7 @@ const theme = createTheme({
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} modeStorageKey="theme">
       <CssBaseline />
 
       <Container disableGutters sx={{ m: 0, px: 0 }} maxWidth={false}>
