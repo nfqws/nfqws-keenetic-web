@@ -27,10 +27,10 @@ export const FilesTabs = () => {
     filename?: string;
   };
 
-  const { files } = useFileNames(getFileTypeForTab(tab));
-
   const navigate = useNavigate();
   const { needSave } = useAppStore();
+
+  const { files, isPending } = useFileNames(getFileTypeForTab(tab));
 
   const currentTab = tab || 'settings';
   const currentFile =
@@ -43,7 +43,15 @@ export const FilesTabs = () => {
   const [removeDialog, setRemoveDialog] = useState('');
   const [clearDialog, setClearDialog] = useState('');
 
-  return (
+  return isPending ? (
+    <Box
+      sx={{
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        minHeight: 50,
+      }}
+    ></Box>
+  ) : (
     <>
       <Box
         sx={{
