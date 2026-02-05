@@ -46,7 +46,7 @@ jobs:
       - name: Summary
         run: |
           echo '```' >> $GITHUB_STEP_SUMMARY
-          ls ./out >> $GITHUB_STEP_SUMMARY
+          ls ./web/dist >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
   build-openwrt:
