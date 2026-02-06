@@ -1,4 +1,4 @@
-// CodeMirror 6 language support for nfqws.conf and nfqws logs
+// CodeMirror 6 language support for logs
 
 import {
   LanguageSupport,

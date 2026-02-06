@@ -1,4 +1,4 @@
-// CodeMirror 6 language support for nfqws.conf and nfqws logs
+// CodeMirror 6 language support for nfqws.conf
 
 import {
   LanguageSupport,
@@ -15,37 +15,16 @@ function wordRegexp(words: string[]) {
 
 type ConfState = {
   tokenize: (stream: StringStream, state: ConfState) => string | null;
-  pendingCore: boolean;
-  afterClosingQuote: boolean;
-  unquotedBlock: boolean;
-  lineIsUnquoted: boolean;
-  coreBlockOpen: boolean;
-  coreBlockClosed: boolean;
+
+  // Double-quote parsing state (shell-ish)
+  dqAtCmdStart: boolean; // after whitespace/newline
+  dqLastFlag: string; // last seen --flag (without leading --)
+  dqInFlagValue: boolean; // after the flag's '='
+  dqInParamValue: boolean; // after a param's '=' (inside lua-desync)
+  dqAfterColon: boolean; // right after ':' inside lua-desync
 };
 
 const ops = wordRegexp(['iptables', 'ip', 'tc', 'route', 'sysctl', 'echo']);
-const coreKeys = wordRegexp([
-  'NFQWS_BASE_ARGS',
-  'ISP_INTERFACE',
-  'NFQWS_ARGS',
-  'NFQWS_ARGS_CUSTOM',
-  'NFQWS_ARGS_QUIC',
-  'NFQWS_ARGS_UDP',
-  'MODE_LIST',
-  'MODE_ALL',
-  'MODE_AUTO',
-  'NFQWS_EXTRA_ARGS',
-  'NFQWS_ARGS_IPSET',
-  'IPV6_ENABLED',
-  'TCP_PORTS',
-  'UDP_PORTS',
-  'POLICY_NAME',
-  'POLICY_EXCLUDE',
-  'LOG_LEVEL',
-  'NFQUEUE_NUM',
-  'USER',
-  'CONFIG_VERSION',
-]);
 const builtin = wordRegexp([
   'ROOT',
   'BIN',
@@ -91,6 +70,158 @@ function tokenString(quote: string) {
   };
 }
 
+function tokenDQuote(stream: StringStream, state: ConfState): string | null {
+  // End of double-quoted string
+  if (stream.eat('"')) {
+    state.tokenize = tokenBase;
+    return 'string';
+  }
+
+  // Escapes inside quotes
+  if (stream.eat('\\')) {
+    stream.next();
+    return 'string';
+  }
+
+  // Whitespace inside quotes: ends the current "command token".
+  if (stream.eatSpace()) {
+    stream.eatWhile(/\s/);
+    state.dqAtCmdStart = true;
+    state.dqLastFlag = '';
+    state.dqInFlagValue = false;
+    state.dqInParamValue = false;
+    state.dqAfterColon = false;
+    return 'string';
+  }
+
+  // ${VAR} or $VAR inside quotes
+  if (stream.eat('$')) {
+    if (stream.eat('{')) {
+      stream.eatWhile(/[\w_]/);
+      stream.eat('}');
+      return 'variable-2';
+    }
+    stream.eatWhile(/[\w_]/);
+    return 'variable-2';
+  }
+
+  // Top-level flags: --foo-bar
+  if (stream.peek() === '-' && stream.string.charAt(stream.pos + 1) === '-') {
+    stream.next();
+    stream.next();
+    stream.eatWhile(/[\w-]/);
+    state.dqLastFlag = stream.current().slice(2);
+    state.dqAtCmdStart = false;
+    state.dqInFlagValue = false;
+    state.dqInParamValue = false;
+    state.dqAfterColon = false;
+    return 'keyword';
+  }
+
+  // Delimiters
+  const p = stream.peek();
+  if (p === ':') {
+    stream.next();
+    // In lua-desync, ':' starts a new segment where a key/atom may appear.
+    state.dqAfterColon = true;
+    state.dqInParamValue = false;
+    return 'operator';
+  }
+  if (p === ',') {
+    stream.next();
+    // Comma is a value separator; it should NOT switch into key mode.
+    return 'operator';
+  }
+  if (p === '=') {
+    stream.next();
+    // First '=' after a flag starts the flag value.
+    if (state.dqLastFlag && !state.dqInFlagValue) {
+      state.dqInFlagValue = true;
+      state.dqInParamValue = false;
+      state.dqAfterColon = false;
+    } else if (state.dqInFlagValue) {
+      // '=' inside lua-desync params: switches into "param value" mode.
+      state.dqInParamValue = true;
+      state.dqAfterColon = false;
+    }
+    return 'operator';
+  }
+
+  // Paths: /foo/bar or @/foo/bar
+  if (stream.eat('@')) {
+    if (stream.peek() === '/') {
+      stream.eatWhile(/[\w\-./]/);
+      return 'string-2';
+    }
+    // Not a path, treat as part of string
+    stream.eatWhile(/[^$"\\\s]/);
+    return 'string';
+  }
+  if (stream.peek() === '/') {
+    stream.next();
+    stream.eatWhile(/[\w\-./]/);
+    return 'string-2';
+  }
+
+  // Negative numbers (e.g. -1000)
+  if (
+    stream.peek() === '-' &&
+    /\d/.test(stream.string.charAt(stream.pos + 1))
+  ) {
+    stream.next();
+    // NOTE: do NOT include ':' here, ':' is a segment delimiter in lua-desync
+    stream.eatWhile(/[0-9,._\-+]/);
+    return 'number';
+  }
+
+  // Numbers / ports / ranges
+  if (stream.peek() && /\d/.test(stream.peek() as string)) {
+    stream.next();
+    // NOTE: do NOT include ':' here, ':' is a segment delimiter in lua-desync
+    stream.eatWhile(/[A-Za-z0-9,._\-+]/);
+    return 'number';
+  }
+
+  // Identifiers / atoms
+  if (stream.peek() && /[A-Za-z_]/.test(stream.peek() as string)) {
+    stream.eatWhile(/[\w.-]/);
+
+    // Inside lua-desync: after ':' an identifier followed by '=' is a param key.
+    // We want param keys to look like level-2 items, and values as 'string'.
+    if (state.dqAfterColon && stream.peek() === '=') {
+      state.dqAfterColon = false;
+      return 'typeName';
+    }
+
+    // After ':' without '=', it's a bare mode/atom like `badsum`.
+    if (state.dqAfterColon) {
+      state.dqAfterColon = false;
+      return 'typeName';
+    }
+
+    // If we are in param value mode, everything is a value (so sni=www.google.com stays value-colored)
+    if (state.dqInParamValue) {
+      return 'string';
+    }
+
+    // Otherwise treat as level-2 atom (modes, payload names, l7 names, etc.)
+    return 'typeName';
+  }
+
+  // Single-dash flags inside quotes (rare): -x
+  if (stream.peek() === '-') {
+    stream.next();
+    stream.eatWhile(/[A-Za-z0-9]/);
+    return 'keyword';
+  }
+
+  // Fallback: consume a short run. MUST always advance at least 1 char.
+  const start = stream.pos;
+  stream.eatWhile(/[^$"\\\s]/);
+  if (stream.pos === start) stream.next();
+  return 'string';
+}
+
 function tokenComment(stream: StringStream, state: ConfState) {
   let maybeEnd = false;
   let ch: string | void;
@@ -113,23 +244,8 @@ function tokenVariable(stream: StringStream, state: ConfState) {
 }
 
 function tokenBase(stream: StringStream, state: ConfState): string | null {
-  // Legacy "unquoted block" error handling
-  if (state.lineIsUnquoted) {
-    stream.skipToEnd();
-    return 'error';
-  }
-
-  if (state.afterClosingQuote) {
-    stream.skipToEnd();
-    return 'error';
-  }
-
   const ch = stream.next();
   if (ch == null) return null;
-
-  if (state.pendingCore && ch !== '"' && ch !== '=') {
-    state.pendingCore = false;
-  }
 
   // Line comments
   if (ch === '#') {
@@ -142,34 +258,19 @@ function tokenBase(stream: StringStream, state: ConfState): string | null {
     return 'operator';
   }
 
-  // Strings + special core block quotes
-  if (ch === '"' || ch === "'") {
-    if (state.pendingCore && ch === '"') {
-      state.pendingCore = false;
-      state.coreBlockOpen = true;
-      state.coreBlockClosed = false;
-
-      // Handle empty "" on the same line
-      if (stream.peek() === '"') {
-        stream.next();
-        state.coreBlockOpen = false;
-        state.coreBlockClosed = true;
-        const rest = stream.string.slice(stream.pos);
-        if (/\S/.test(rest)) state.afterClosingQuote = true;
-      }
-      return 'string';
-    }
-
-    // Closing quote of a core block line with only "
-    if (state.coreBlockOpen && ch === '"') {
-      state.coreBlockOpen = false;
-      state.coreBlockClosed = true;
-      const restAfter = stream.string.slice(stream.pos);
-      if (/\S/.test(restAfter)) state.afterClosingQuote = true;
-      return 'string';
-    }
-
+  // Strings
+  if (ch === "'") {
     return chain(stream, state, tokenString(ch));
+  }
+
+  // Double-quoted strings: parse like shell fragments + highlight $VAR/${VAR}
+  if (ch === '"') {
+    state.dqAtCmdStart = true;
+    state.dqLastFlag = '';
+    state.dqInFlagValue = false;
+    state.dqInParamValue = false;
+    state.dqAfterColon = false;
+    return chain(stream, state, tokenDQuote);
   }
 
   if (ch === '=') {
@@ -179,6 +280,12 @@ function tokenBase(stream: StringStream, state: ConfState): string | null {
   // ${VAR}
   if (ch === '$' && stream.eat('{')) {
     return chain(stream, state, tokenVariable);
+  }
+
+  // $VAR
+  if (ch === '$') {
+    stream.eatWhile(/[\w_]/);
+    return 'variable-2';
   }
 
   // Numbers / ports / ranges
@@ -205,13 +312,15 @@ function tokenBase(stream: StringStream, state: ConfState): string | null {
     return 'string-2';
   }
 
+  // @/path (common in this config)
+  if (ch === '@' && stream.peek() === '/') {
+    stream.eatWhile(/[\w\-./]/);
+    return 'string-2';
+  }
+
   // Flags --foo / -x
-  if (ch === '-' && stream.peek() === '-') {
+  if (ch === '-' && stream.peek() === '--') {
     stream.eatWhile(/[\w\-:]+/);
-    // const flag = stream.current();
-    // if (flag === '--new') return 'nfqws-new';
-    // if (flag === '--filter-udp' || flag === '--filter-tcp')
-    //   return 'nfqws-filter';
     return 'keyword';
   }
 
@@ -221,18 +330,16 @@ function tokenBase(stream: StringStream, state: ConfState): string | null {
     return 'operator';
   }
 
-  // Keys
+  // Keys / identifiers
   if (/[A-Za-z_]/.test(ch)) {
     stream.eatWhile(/[\w_]/);
-    const name = stream.current();
     if (stream.peek() === '=') {
-      if (coreKeys.test(name)) {
-        state.pendingCore = true;
-        state.coreBlockClosed = false;
-        state.unquotedBlock = false;
-        return 'def';
-      }
-      return 'variable-2';
+      // Any VAR= is a definition (shell-style), not only a fixed allowlist
+      return 'def';
+    }
+    if (stream.peek() === ':') {
+      // first segment before ':' is key even without '='
+      return 'def';
     }
   }
 
@@ -240,7 +347,6 @@ function tokenBase(stream: StringStream, state: ConfState): string | null {
   const cur = stream.current();
 
   if (ops.test(cur)) return 'builtin';
-  if (coreKeys.test(cur)) return 'def';
   if (builtin.test(cur)) return 'variable-2';
 
   return 'variable';
@@ -251,56 +357,15 @@ export const nfqwsConfStream = StreamLanguage.define<ConfState>({
   startState() {
     const state: ConfState = {
       tokenize: tokenBase,
-      pendingCore: false,
-      afterClosingQuote: false,
-      unquotedBlock: false,
-      lineIsUnquoted: false,
-      coreBlockOpen: false,
-      coreBlockClosed: false,
+      dqAtCmdStart: true,
+      dqLastFlag: '',
+      dqInFlagValue: false,
+      dqInParamValue: false,
+      dqAfterColon: false,
     };
     return state;
   },
   token(stream, state) {
-    if (stream.sol()) {
-      state.afterClosingQuote = false;
-      state.lineIsUnquoted = false;
-
-      const trimmed = stream.string.trim();
-
-      // if we are inside a core block and the line is exactly `"`, close it
-      if (state.coreBlockOpen && trimmed === '"') {
-        state.coreBlockOpen = false;
-        state.coreBlockClosed = true;
-      }
-
-      const match = trimmed.match(/^([A-Za-z_][\w_]*)=/);
-      if (match && coreKeys.test(match[1])) {
-        state.coreBlockClosed = false;
-      }
-
-      // If we previously decided to treat the following lines as "unquoted block",
-      // then any line starting with flags is an error (legacy behavior).
-      if (state.unquotedBlock && trimmed.startsWith('--')) {
-        state.lineIsUnquoted = true;
-      }
-
-      // After closing a core block, any non-empty non-comment line (except `"` itself)
-      // is treated as an error in the legacy mode.
-      if (
-        state.coreBlockClosed &&
-        trimmed &&
-        trimmed !== '"' &&
-        !trimmed.startsWith('#')
-      ) {
-        state.lineIsUnquoted = true;
-      }
-
-      // reset on blank/comment line
-      if (trimmed === '' || trimmed.startsWith('#')) {
-        state.unquotedBlock = false;
-      }
-    }
-
     if (stream.eatSpace()) return null;
     return state.tokenize(stream, state);
   },
