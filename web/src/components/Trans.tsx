@@ -1,6 +1,13 @@
-import { useTranslation, type TranslationKey } from '@/hooks/useTranslation';
+import {
+  useTranslation,
+  type TranslationKey,
+  type TranslationParams,
+} from '@/hooks/useTranslation';
 
-export const Trans = ({ i18nKey }: { i18nKey: TranslationKey }) => {
+export const Trans = ({
+  i18nKey,
+  ...props
+}: TranslationParams & { i18nKey: TranslationKey }) => {
   const { t } = useTranslation();
-  return <>{t(i18nKey)}</>;
+  return <>{t(i18nKey, props)}</>;
 };

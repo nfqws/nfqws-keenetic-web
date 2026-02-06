@@ -28,9 +28,11 @@ type LeafStringPaths<T> = T extends string
 export type TranslationSchema = typeof en;
 export type TranslationKey = LeafStringPaths<TranslationSchema>;
 
+export type TranslationParams = Record<string, string | number>;
+
 type TFunction = {
-  (key: TranslationKey, fallback?: string): string;
-  (key: string, fallback?: string): string;
+  (key: TranslationKey, params?: TranslationParams, fallback?: string): string;
+  (key: string, params?: TranslationParams, fallback?: string): string;
 };
 
 const resolve = (keys: string[], pack: JsonValue): string | undefined => {
@@ -47,6 +49,14 @@ const resolve = (keys: string[], pack: JsonValue): string | undefined => {
   return typeof current === 'string' ? current : undefined;
 };
 
+const interpolate = (template: string, params?: TranslationParams): string => {
+  if (!params) return template;
+
+  return template.replace(/\{\{(\w+)}}/g, (_, key) =>
+    key in params ? String(params[key]) : `{{${key}}}`,
+  );
+};
+
 export const useTranslation = () => {
   // TODO: storage
   const language = useMemo(() => {
@@ -58,18 +68,18 @@ export const useTranslation = () => {
   const defaultLangpack = en;
 
   const t = useCallback(
-    (path, fallback = '__MISSING__') => {
+    (path, params, fallback = '__MISSING__') => {
       const keys = path.split('.');
 
       const primary = resolve(keys, langpack);
       if (primary !== undefined) {
-        return primary;
+        return interpolate(primary, params);
       }
 
       if (langpack !== defaultLangpack) {
         const secondary = resolve(keys, defaultLangpack);
         if (secondary !== undefined) {
-          return secondary;
+          return interpolate(secondary, params);
         }
       }
 
