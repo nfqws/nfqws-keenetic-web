@@ -40,7 +40,8 @@ export const Header = () => {
 
   const config = useConfig(nfqws2);
 
-  const { needSave, onSave, setCheckDomainsList } = useAppStore();
+  const { needSave, onSave, setCheckDomainsList, needReload, setNeedReload } =
+    useAppStore();
 
   const [output, setOutput] = useState<boolean | string>(false);
 
@@ -64,6 +65,10 @@ export const Header = () => {
       `> nfqws2-keenetic ${command}\n${data?.output?.join('\n') || ''}`,
     );
     void API.invalidateStatus();
+
+    if (command === 'upgrade') {
+      setNeedReload(true);
+    }
   };
 
   return (
@@ -291,7 +296,12 @@ export const Header = () => {
       <OutputLogDialog
         content={output}
         open={Boolean(output)}
-        onClose={() => setOutput('')}
+        onClose={() => {
+          setOutput('');
+          if (needReload) {
+            window.location.reload();
+          }
+        }}
       />
     </>
   );
