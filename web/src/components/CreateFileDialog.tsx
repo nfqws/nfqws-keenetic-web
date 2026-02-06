@@ -81,7 +81,7 @@ export const CreateFileDialog = ({
         />
 
         {error && (
-          <Alert severity="error" sx={{ mb: 1 }}>
+          <Alert severity="error" variant="outlined" sx={{ mb: 1 }}>
             Failed to create file
           </Alert>
         )}

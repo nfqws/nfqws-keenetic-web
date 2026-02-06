@@ -3,6 +3,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import {
+  Alert,
   Box,
   Button,
   Dialog,
@@ -198,12 +199,19 @@ export const CheckDomainsDialog = ({
           </Box>
         </Paper>
 
+        <Alert severity="warning" variant="outlined" sx={{ mt: 1 }}>
+          May show false negative data due to{' '}
+          <Link href="https://developer.mozilla.org/ru/docs/Web/HTTP/Guides/CORS">
+            CORS
+          </Link>{' '}
+          limitations
+        </Alert>
+
         <Box
           sx={{
-            mt: 2,
+            mt: 1,
             maxHeight: 360,
             overflow: 'auto',
-            pr: 0.5,
           }}
         >
           {Object.entries(result).map(([domain, success]) => (
@@ -245,7 +253,6 @@ export const CheckDomainsDialog = ({
                   sx={{
                     fontFamily: (theme) => theme.typography.mono.fontFamily,
                     fontSize: 13,
-                    fontWeight: 600,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',

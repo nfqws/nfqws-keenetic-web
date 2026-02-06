@@ -71,7 +71,7 @@ export const LoginDialog = () => {
           />
 
           {loginError && (
-            <Alert severity="error" sx={{ mb: 1 }}>
+            <Alert severity="error" variant="outlined" sx={{ mb: 1 }}>
               Incorrect username or password
             </Alert>
           )}

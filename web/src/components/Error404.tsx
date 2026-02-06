@@ -12,7 +12,9 @@ export function Error404() {
       <MainTabs />
 
       <Box flex={1} sx={{ position: 'relative', p: 3 }}>
-        <Alert severity="error">404: Page not found.</Alert>
+        <Alert severity="error" variant="outlined">
+          404: Page not found.
+        </Alert>
       </Box>
 
       <Footer />
