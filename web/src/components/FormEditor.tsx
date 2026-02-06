@@ -48,8 +48,6 @@ export const FormEditor = ({
         <Editor
           value={value}
           type="conf"
-          readonly={false}
-          autoFocus={false}
           maxHeight="14em"
           onChange={onChange}
         />

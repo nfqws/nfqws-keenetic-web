@@ -30,7 +30,7 @@ export const Editor = ({
   onChange,
   onSave,
   readonly = false,
-  autoFocus = true,
+  autoFocus = false,
   maxHeight = 'auto',
   sx,
 }: EditorProps) => {
@@ -108,6 +108,7 @@ export const Editor = ({
         theme={palette.mode === 'light' ? vscodeLight : vscodeDark}
         autoFocus={autoFocus}
         readOnly={readonly}
+        editable={!readonly}
         lang="shell"
         onCreateEditor={(view) => setEditorView(view)}
         onChange={(newValue) => {

@@ -59,7 +59,6 @@ export const LoginDialog = () => {
           />
 
           <TextField
-            autoFocus
             autoComplete="off"
             type="password"
             margin="dense"
