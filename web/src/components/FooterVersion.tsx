@@ -22,7 +22,10 @@ export const FooterVersion = () => {
       }}
     >
       {version && (
-        <Tooltip title={nfqws2 ? 'NFQWS2 version' : 'NFQWS version'}>
+        <Tooltip
+          title={nfqws2 ? 'NFQWS2 version' : 'NFQWS version'}
+          enterTouchDelay={0}
+        >
           <Stack
             direction="row"
             color="text.secondary"
@@ -57,7 +60,7 @@ export const FooterVersion = () => {
       </Stack>
 
       {webVersion && (
-        <Tooltip title="Web version">
+        <Tooltip title="Web version" enterTouchDelay={0}>
           <Stack
             direction="row"
             color="text.secondary"
