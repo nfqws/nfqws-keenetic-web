@@ -17,6 +17,7 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { CreateFileDialog } from '@/components/CreateFileDialog';
 
 import { useFileNames } from '@/hooks/useFileNames';
+import { useTranslation } from '@/hooks/useTranslation';
 
 import { getFileTypeForTab } from '@/utils/getFileTypeForTab';
 
@@ -27,6 +28,8 @@ export const FilesTabs = () => {
   };
 
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const { files, isPending, findFile } = useFileNames(getFileTypeForTab(tab));
 
@@ -82,7 +85,7 @@ export const FilesTabs = () => {
                 value="config"
                 icon={<DisplaySettingsIcon fontSize="small" />}
                 iconPosition="start"
-                label="Config"
+                label={t('tabs.config')}
                 sx={{
                   minHeight: '50px',
                   fontSize: 14,
@@ -202,7 +205,7 @@ export const FilesTabs = () => {
               size="small"
               color="primary"
               onClick={() => setCreateDialog(true)}
-              title="Create new file"
+              title={t('create_file.create')}
             >
               <AddOutlinedIcon fontSize="small" />
             </IconButton>
@@ -211,8 +214,8 @@ export const FilesTabs = () => {
       </Box>
 
       <ConfirmationDialog
-        title="Delete file"
-        description="Really delete this file?"
+        title={t('confirmation.delete_file.title')}
+        description={t('confirmation.delete_file.description')}
         open={Boolean(removeDialog)}
         onClose={() => setRemoveDialog('')}
         onSubmit={async () => {
@@ -233,8 +236,8 @@ export const FilesTabs = () => {
       />
 
       <ConfirmationDialog
-        title="Clear log"
-        description="Really clear log file?"
+        title={t('confirmation.clear_log.title')}
+        description={t('confirmation.clear_log.description')}
         open={Boolean(clearDialog)}
         onClose={() => setClearDialog('')}
         onSubmit={async () => {

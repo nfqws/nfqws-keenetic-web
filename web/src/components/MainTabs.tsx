@@ -6,8 +6,12 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 
 import { mainTabsValues, type MainTabsValues } from '@/types/types';
 
+import { useTranslation } from '@/hooks/useTranslation';
+
 export const MainTabs = () => {
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const { tab } = useParams({ strict: false }) as {
     tab?: MainTabsValues;
@@ -46,7 +50,7 @@ export const MainTabs = () => {
             value="settings"
             icon={<DisplaySettingsIcon fontSize="small" />}
             iconPosition="start"
-            label="Settings"
+            label={t('tabs.settings')}
             sx={{
               minHeight: '50px',
               fontSize: 14,
@@ -65,7 +69,7 @@ export const MainTabs = () => {
             value="lists"
             icon={<DescriptionOutlinedIcon fontSize="small" />}
             iconPosition="start"
-            label="Lists"
+            label={t('tabs.lists')}
             sx={{
               minHeight: '50px',
               fontSize: 14,
@@ -84,7 +88,7 @@ export const MainTabs = () => {
             value="logs"
             icon={<ArticleOutlinedIcon fontSize="small" />}
             iconPosition="start"
-            label="Logs"
+            label={t('tabs.logs')}
             sx={{
               minHeight: '50px',
               fontSize: 14,

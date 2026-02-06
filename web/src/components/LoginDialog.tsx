@@ -10,10 +10,14 @@ import {
 
 import { API } from '@/api/client';
 
+import { useTranslation } from '@/hooks/useTranslation';
+
 export const LoginDialog = () => {
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(false);
+
+  const { t } = useTranslation();
 
   const handleLogin = async () => {
     if (!user || !password) {
@@ -50,7 +54,7 @@ export const LoginDialog = () => {
             autoFocus
             autoComplete="off"
             margin="dense"
-            label="Username"
+            label={t('auth.username')}
             fullWidth
             variant="outlined"
             value={user}
@@ -62,7 +66,7 @@ export const LoginDialog = () => {
             autoComplete="off"
             type="password"
             margin="dense"
-            label="Password"
+            label={t('auth.password')}
             fullWidth
             variant="outlined"
             value={password}
@@ -72,7 +76,7 @@ export const LoginDialog = () => {
 
           {loginError && (
             <Alert severity="error" variant="outlined" sx={{ mb: 1 }}>
-              Incorrect username or password
+              {t('auth.error')}
             </Alert>
           )}
         </DialogContent>
@@ -83,7 +87,7 @@ export const LoginDialog = () => {
           }}
         >
           <Button type="submit" variant="contained" sx={{ px: 7 }}>
-            Login
+            {t('auth.login')}
           </Button>
         </DialogActions>
       </Dialog>

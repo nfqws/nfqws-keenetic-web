@@ -13,10 +13,13 @@ import { MainTabs } from '@/components/MainTabs';
 import { useAppStore } from '@/store/useAppStore';
 
 import { useStatus } from '@/hooks/useStatus';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export function App({ children }: { children?: ReactNode }) {
   const { auth, checkDomainsList, setCheckDomainsList, needSave } =
     useAppStore();
+
+  const { t } = useTranslation();
 
   const { isPending, status } = useStatus();
   const nfqwsInstalled = isPending || status;
@@ -46,7 +49,7 @@ export function App({ children }: { children?: ReactNode }) {
               <CircularProgress color="inherit" />
             ) : (
               <Typography variant="subtitle1" color="text.primary">
-                NFQWS is not installed
+                {t('system.not_installed')}
               </Typography>
             )}
           </Backdrop>
@@ -65,8 +68,8 @@ export function App({ children }: { children?: ReactNode }) {
       )}
 
       <ConfirmationDialog
-        title="File is not saved"
-        description="Current file is not saved. Really close?"
+        title={t('confirmation.file_not_saved.title')}
+        description={t('confirmation.file_not_saved.description')}
         open={blockStatus === 'blocked'}
         onClose={() => reset?.()}
         onSubmit={() => proceed?.()}

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   Button,
   Dialog,
@@ -7,6 +8,8 @@ import {
   DialogTitle,
 } from '@mui/material';
 
+import { Trans } from '@/components/Trans';
+
 export const ConfirmationDialog = ({
   title,
   description,
@@ -14,8 +17,8 @@ export const ConfirmationDialog = ({
   onClose,
   onSubmit,
 }: {
-  title: string;
-  description: string;
+  title: string | ReactNode;
+  description: string | ReactNode;
   open: boolean;
   onClose: VoidFunction;
   onSubmit: VoidFunction;
@@ -28,7 +31,7 @@ export const ConfirmationDialog = ({
       </DialogContent>
       <DialogActions>
         <Button autoFocus onClick={onClose}>
-          No
+          <Trans i18nKey="common.no" />
         </Button>
         <Button
           autoFocus
@@ -37,7 +40,7 @@ export const ConfirmationDialog = ({
             onClose();
           }}
         >
-          Yes
+          <Trans i18nKey="common.yes" />
         </Button>
       </DialogActions>
     </Dialog>

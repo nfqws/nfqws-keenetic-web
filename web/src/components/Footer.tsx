@@ -8,8 +8,11 @@ import { API } from '@/api/client';
 
 import { useAppStore } from '@/store/useAppStore';
 
+import { useTranslation } from '@/hooks/useTranslation';
+
 export const Footer = () => {
   const { auth } = useAppStore();
+  const { t } = useTranslation();
 
   const { mode, setMode } = useColorScheme();
 
@@ -99,7 +102,7 @@ export const Footer = () => {
           <Link
             component="button"
             color="text.secondary"
-            title="Change theme"
+            title={t('system.change_theme')}
             sx={{
               display: 'inline-flex',
               gap: 0.85,
@@ -123,7 +126,7 @@ export const Footer = () => {
             <Link
               component="button"
               color="text.secondary"
-              title="Logout"
+              title={t('auth.logout')}
               sx={{
                 display: 'inline-flex',
                 gap: 0.85,

@@ -1,0 +1,81 @@
+{
+  "system": {
+    "not_installed": "NFQWS is not installed",
+    "not_found": "404: Page not found",
+    "change_theme": "Change theme"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "error": "Incorrect username or password"
+  },
+  "tabs": {
+    "config": "Config",
+    "settings": "Settings",
+    "lists": "Lists",
+    "logs": "Logs"
+  },
+  "common": {
+    "start": "Start",
+    "stop": "Stop",
+    "restart": "Restart",
+    "reload": "Reload",
+    "update": "Update",
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "confirmation": {
+    "file_not_saved": {
+      "title": "File is not saved",
+      "description": "Current file is not saved. Really close?"
+    },
+    "delete_file": {
+      "title": "Delete file",
+      "description": "Really delete this file?"
+    },
+    "clear_log": {
+      "title": "Clear log",
+      "description": "Really clear log file?"
+    }
+  },
+  "check_domains": {
+    "button": "Check domains",
+    "title": "Check domains: {{list}}",
+    "total": "Total domains:",
+    "available": "Available:",
+    "blocked": "Blocked:",
+    "information": "May show false negative data due to {{cors}} limitations"
+  },
+  "create_file": {
+    "title": "Create list",
+    "error": "Failed to create file",
+    "create": "Create new file",
+    "name_title": "File name"
+  },
+  "update": {
+    "version_title": "{{app}} version",
+    "update_available": "{{app}} update available: {{version}}"
+  },
+  "form": {
+    "ISP_INTERFACE": "Network interface",
+    "NFQWS_BASE_ARGS": "Startup arguments",
+    "NFQWS_ARGS": "Base strategy",
+    "NFQWS_ARGS_QUIC": "Quic strategy",
+    "NFQWS_ARGS_UDP": "UDP strategy",
+    "NFQWS_ARGS_CUSTOM": "Custom strategy",
+    "NFQWS_ARGS_IPSET": "IPSET arguments",
+    "NFQWS_EXTRA_ARGS": "Mode",
+    "TCP_PORTS": "TCP ports",
+    "UDP_PORTS": "UDP ports",
+    "POLICY_NAME": "Policy name",
+    "POLICY_EXCLUDE": "Policy exclude mode",
+    "IPV6_ENABLED": "IPv6 enabled",
+    "LOG_LEVEL": "Debug logging"
+  }
+}

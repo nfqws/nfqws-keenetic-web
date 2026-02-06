@@ -29,6 +29,7 @@ import { FormEditor } from '@/components/FormEditor';
 import { useAppStore } from '@/store/useAppStore';
 
 import { useStatus } from '@/hooks/useStatus';
+import { useTranslation } from '@/hooks/useTranslation';
 
 import {
   formatConfig,
@@ -46,6 +47,8 @@ function RouteComponent() {
   const { confFile } = useConfig(nfqws2);
   const { data: originalConfig, isPending } = API.fileContent(confFile);
   const { setNeedSave, needSave, setOnSave } = useAppStore();
+
+  const { t } = useTranslation();
 
   const [originalConfigParsed, setOriginalConfigParsed] =
     useState<NfqwsConfig | null>(null);
@@ -167,7 +170,7 @@ function RouteComponent() {
         >
           <TextField
             id="ISP_INTERFACE"
-            label="Network interface"
+            label={t('form.ISP_INTERFACE')}
             fullWidth
             value={form.ISP_INTERFACE}
             onChange={changeHandler('ISP_INTERFACE')}
@@ -176,47 +179,47 @@ function RouteComponent() {
 
           {nfqws2 && (
             <FormEditor
-              label="Startup arguments"
+              label={t('form.NFQWS_BASE_ARGS')}
               value={originalConfigParsed.NFQWS_BASE_ARGS}
               onChange={changeHandler('NFQWS_BASE_ARGS')}
             />
           )}
 
           <FormEditor
-            label="Base strategy"
+            label={t('form.NFQWS_ARGS')}
             value={originalConfigParsed.NFQWS_ARGS}
             onChange={changeHandler('NFQWS_ARGS')}
           />
 
           <FormEditor
-            label="Quic strategy"
+            label={t('form.NFQWS_ARGS_QUIC')}
             value={originalConfigParsed.NFQWS_ARGS_QUIC}
             onChange={changeHandler('NFQWS_ARGS_QUIC')}
           />
 
           <FormEditor
-            label="UDP strategy"
+            label={t('form.NFQWS_ARGS_UDP')}
             value={originalConfigParsed.NFQWS_ARGS_UDP}
             onChange={changeHandler('NFQWS_ARGS_UDP')}
           />
 
           <FormEditor
-            label="Custom strategy"
+            label={t('form.NFQWS_ARGS_CUSTOM')}
             value={originalConfigParsed.NFQWS_ARGS_CUSTOM}
             onChange={changeHandler('NFQWS_ARGS_CUSTOM')}
           />
 
           <FormEditor
-            label="IPSET arguments"
+            label={t('form.NFQWS_ARGS_IPSET')}
             value={originalConfigParsed.NFQWS_ARGS_IPSET}
             onChange={changeHandler('NFQWS_ARGS_IPSET')}
           />
 
           <FormControl fullWidth>
-            <InputLabel>Mode</InputLabel>
+            <InputLabel>{t('form.NFQWS_EXTRA_ARGS')}</InputLabel>
             <Select
               id="NFQWS_EXTRA_ARGS"
-              label="Mode"
+              label={t('form.NFQWS_EXTRA_ARGS')}
               value={form.NFQWS_EXTRA_ARGS}
               fullWidth
               sx={{ minWidth: 120 }}
@@ -229,7 +232,7 @@ function RouteComponent() {
           </FormControl>
           <TextField
             id="TCP_PORTS"
-            label="TCP ports"
+            label={t('form.TCP_PORTS')}
             minRows={2}
             fullWidth
             value={form.TCP_PORTS}
@@ -238,7 +241,7 @@ function RouteComponent() {
           />
           <TextField
             id="UDP_PORTS"
-            label="UDP ports"
+            label={t('form.UDP_PORTS')}
             minRows={2}
             fullWidth
             value={form.UDP_PORTS}
@@ -247,14 +250,14 @@ function RouteComponent() {
           />
           <TextField
             id="POLICY_NAME"
-            label="Policy name"
+            label={t('form.POLICY_NAME')}
             fullWidth
             value={form.POLICY_NAME}
             onChange={changeHandler('POLICY_NAME')}
             spellCheck={false}
           />
           <FormControlLabel
-            label="Policy exclude mode"
+            label={t('form.POLICY_EXCLUDE')}
             control={
               <Checkbox
                 id="POLICY_EXCLUDE"
@@ -265,7 +268,7 @@ function RouteComponent() {
             sx={{ mt: '-1em' }}
           />
           <FormControlLabel
-            label="IPv6 enabled"
+            label={t('form.IPV6_ENABLED')}
             control={
               <Checkbox
                 id="IPV6_ENABLED"
@@ -276,7 +279,7 @@ function RouteComponent() {
             sx={{ mt: '-1em' }}
           />
           <FormControlLabel
-            label="Debug logging"
+            label={t('form.LOG_LEVEL')}
             control={
               <Checkbox
                 id="LOG_LEVEL"

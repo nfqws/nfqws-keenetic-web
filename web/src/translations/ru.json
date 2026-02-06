@@ -1,0 +1,81 @@
+{
+  "system": {
+    "not_installed": "NFQWS не установлен",
+    "not_found": "404: Страница не найдена",
+    "change_theme": "Сменить тему оформления"
+  },
+  "auth": {
+    "login": "Вход",
+    "logout": "Выход",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "error": "Неверное имя пользователя или пароль"
+  },
+  "tabs": {
+    "config": "Конфиг",
+    "settings": "Настройки",
+    "lists": "Списки",
+    "logs": "Логи"
+  },
+  "common": {
+    "start": "Старт",
+    "stop": "Остановить",
+    "restart": "Перезапуск",
+    "reload": "Перезагрузка",
+    "update": "Обновить",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "save": "Сохранить",
+    "close": "Закрыть",
+    "yes": "Да",
+    "no": "Нет"
+  },
+  "confirmation": {
+    "file_not_saved": {
+      "title": "Файл не сохранён",
+      "description": "Текущий файл не сохранён. Действительно закрыть?"
+    },
+    "delete_file": {
+      "title": "Удаление файла",
+      "description": "Действительно удалить этот файл?"
+    },
+    "clear_log": {
+      "title": "Очистка лога",
+      "description": "Действительно очистить лог?"
+    }
+  },
+  "check_domains": {
+    "button": "Проверить домены",
+    "title": "Проверка доменов: {{list}}",
+    "total": "Всего доменов:",
+    "available": "Доступно:",
+    "blocked": "Заблокировано:",
+    "information": "Может отображать ложные данные из-за ограничений {{cors}}"
+  },
+  "create_file": {
+    "title": "Создание списка",
+    "error": "Не удалось создать файл",
+    "create": "Создать новый файл",
+    "name_title": "Имя файла"
+  },
+  "update": {
+    "version_title": "Версия {{app}}",
+    "update_available": "Доступно обновление {{app}}: {{version}}"
+  },
+  "form": {
+    "ISP_INTERFACE": "Сетевой интерфейс",
+    "NFQWS_BASE_ARGS": "Параметры запуска",
+    "NFQWS_ARGS": "Базовая стратегия",
+    "NFQWS_ARGS_QUIC": "Стратегия QUIC",
+    "NFQWS_ARGS_UDP": "Стратегия UDP",
+    "NFQWS_ARGS_CUSTOM": "Пользовательская стратегия",
+    "NFQWS_ARGS_IPSET": "Параметры IPSET",
+    "NFQWS_EXTRA_ARGS": "Режим работы",
+    "TCP_PORTS": "TCP-порты",
+    "UDP_PORTS": "UDP-порты",
+    "POLICY_NAME": "Название политики",
+    "POLICY_EXCLUDE": "Режим исключения политики",
+    "IPV6_ENABLED": "IPv6 включён",
+    "LOG_LEVEL": "Отладочное логирование"
+  }
+}

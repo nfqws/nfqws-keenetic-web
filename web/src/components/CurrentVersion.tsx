@@ -2,10 +2,13 @@ import { Chip, Stack, Tooltip } from '@mui/material';
 import type { SxProps } from '@mui/system/styleFunctionSx';
 
 import { compareVersions, useStatus } from '@/hooks/useStatus';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export const CurrentVersion = ({ sx }: { sx?: SxProps }) => {
   const { version, latest, url, webVersion, webLatest, webUrl, nfqws2 } =
     useStatus();
+
+  const { t } = useTranslation();
 
   const updateAvailable = version && latest && compareVersions(version, latest);
 
@@ -29,13 +32,16 @@ export const CurrentVersion = ({ sx }: { sx?: SxProps }) => {
         <Tooltip
           title={
             updateAvailable
-              ? `${appName} update available: ${latest.join('.')}`
-              : `${appName} version`
+              ? t('update.update_available', {
+                  app: appName,
+                  version: latest.join('.'),
+                })
+              : t('update.version_title', { app: appName })
           }
           enterTouchDelay={0}
         >
           <Chip
-            label={`${version.join('.')}`}
+            label={version.join('.')}
             size="small"
             variant="outlined"
             color={updateAvailable ? 'warning' : 'primary'}
@@ -56,13 +62,16 @@ export const CurrentVersion = ({ sx }: { sx?: SxProps }) => {
         <Tooltip
           title={
             webUpdateAvailable
-              ? `web update available: ${webLatest.join('.')}`
-              : `web version`
+              ? t('update.update_available', {
+                  app: 'web',
+                  version: webVersion.join('.'),
+                })
+              : t('update.version_title', { app: 'web' })
           }
           enterTouchDelay={0}
         >
           <Chip
-            label={`${webVersion.join('.')}`}
+            label={webVersion.join('.')}
             size="small"
             variant="outlined"
             color={webUpdateAvailable ? 'warning' : 'primary'}

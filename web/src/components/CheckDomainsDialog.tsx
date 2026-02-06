@@ -22,6 +22,8 @@ import { API } from '@/api/client';
 
 import { useAppStore } from '@/store/useAppStore';
 
+import { useTranslation } from '@/hooks/useTranslation';
+
 import { checkDomains, parseListFile } from '@/utils/checkDomain';
 
 export const CheckDomainsDialog = ({
@@ -32,6 +34,7 @@ export const CheckDomainsDialog = ({
   onClose: VoidFunction;
 }) => {
   const { checkDomainsList } = useAppStore();
+  const { t } = useTranslation();
   const { data: list } = API.fileContent(checkDomainsList);
 
   const [domains, setDomains] = useState<string[]>([]);
@@ -105,12 +108,8 @@ export const CheckDomainsDialog = ({
       disableEscapeKeyDown
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        Check domains: {checkDomainsList}
-        <IconButton
-          aria-label="close"
-          onClick={closeDialog}
-          sx={{ ml: 'auto' }}
-        >
+        {t('check_domains.title', { list: checkDomainsList })}
+        <IconButton onClick={closeDialog} sx={{ ml: 'auto' }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -140,7 +139,7 @@ export const CheckDomainsDialog = ({
               component="div"
               sx={{ color: 'text.secondary', fontSize: 13 }}
             >
-              Total domains:
+              {t('check_domains.total')}
             </Typography>
             <Typography
               component="div"
@@ -154,7 +153,7 @@ export const CheckDomainsDialog = ({
               component="div"
               sx={{ color: 'text.secondary', fontSize: 13 }}
             >
-              Available:
+              {t('check_domains.available')}
             </Typography>
             <Typography
               component="div"
@@ -168,7 +167,7 @@ export const CheckDomainsDialog = ({
               component="div"
               sx={{ color: 'text.secondary', fontSize: 13 }}
             >
-              Blocked:
+              {t('check_domains.blocked')}
             </Typography>
             <Typography
               component="div"
@@ -200,11 +199,13 @@ export const CheckDomainsDialog = ({
         </Paper>
 
         <Alert severity="warning" variant="outlined" sx={{ mt: 1 }}>
-          May show false negative data due to{' '}
-          <Link href="https://developer.mozilla.org/ru/docs/Web/HTTP/Guides/CORS">
-            CORS
-          </Link>{' '}
-          limitations
+          {t('check_domains.information', {
+            cors: (
+              <Link href="https://developer.mozilla.org/ru/docs/Web/HTTP/Guides/CORS">
+                CORS
+              </Link>
+            ),
+          })}
         </Alert>
 
         <Box
@@ -286,7 +287,7 @@ export const CheckDomainsDialog = ({
             fullWidth
             disabled={!domains.length}
           >
-            Start
+            {t('common.start')}
           </Button>
         ) : (
           <Button
@@ -296,7 +297,7 @@ export const CheckDomainsDialog = ({
             fullWidth
             disabled={!domains.length}
           >
-            Stop
+            {t('common.stop')}
           </Button>
         )}
       </DialogActions>

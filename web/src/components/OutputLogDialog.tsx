@@ -9,6 +9,8 @@ import {
   Paper,
 } from '@mui/material';
 
+import { Trans } from '@/components/Trans';
+
 export const OutputLogDialog = ({
   content,
   open,
@@ -36,7 +38,7 @@ export const OutputLogDialog = ({
               fontFamily: (theme) => theme.typography.mono.fontFamily,
               fontSize: 13,
               lineHeight: 1.5,
-              bgcolor: 'background.default',
+              backgroundColor: 'background.default',
               maxHeight: 300,
               overflow: 'auto',
             }}
@@ -57,7 +59,7 @@ export const OutputLogDialog = ({
         }}
       >
         <Button autoFocus onClick={onClose}>
-          Close
+          <Trans i18nKey="common.close" />
         </Button>
       </DialogActions>
     </Dialog>

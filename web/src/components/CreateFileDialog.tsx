@@ -13,6 +13,8 @@ import { useNavigate } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 
+import { useTranslation } from '@/hooks/useTranslation';
+
 export const CreateFileDialog = ({
   open,
   onClose,
@@ -23,6 +25,8 @@ export const CreateFileDialog = ({
   const [name, setName] = useState('');
   const [error, setError] = useState(false);
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const handleClose = useCallback(() => {
     onClose();
@@ -58,12 +62,12 @@ export const CreateFileDialog = ({
         },
       }}
     >
-      <DialogTitle>Create list</DialogTitle>
+      <DialogTitle>{t('create_file.title')}</DialogTitle>
       <DialogContent sx={{ pt: 4, pb: 0 }}>
         <TextField
           autoFocus
           margin="dense"
-          label="File name"
+          label={t('create_file.name_title')}
           fullWidth
           variant="outlined"
           value={name}
@@ -82,13 +86,13 @@ export const CreateFileDialog = ({
 
         {error && (
           <Alert severity="error" variant="outlined" sx={{ mb: 1 }}>
-            Failed to create file
+            {t('create_file.error')}
           </Alert>
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Create</Button>
+        <Button onClick={handleClose}>{t('common.cancel')}</Button>
+        <Button onClick={handleSubmit}>{t('common.create')}</Button>
       </DialogActions>
     </Dialog>
   );

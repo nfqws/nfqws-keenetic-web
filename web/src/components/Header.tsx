@@ -27,6 +27,7 @@ import { type ServiceActionRequest } from '@/api/schema';
 
 import { CurrentVersion } from '@/components/CurrentVersion';
 import { OutputLogDialog } from '@/components/OutputLogDialog';
+import { Trans } from '@/components/Trans';
 
 import { useAppStore } from '@/store/useAppStore';
 
@@ -183,7 +184,7 @@ export const Header = () => {
                 )
               }
             >
-              Check domains
+              <Trans i18nKey="check_domains.button" />
             </Button>
 
             <Button
@@ -194,7 +195,7 @@ export const Header = () => {
               color="error"
               onClick={onSave}
             >
-              Save
+              <Trans i18nKey="common.save" />
             </Button>
 
             <Stack
@@ -240,7 +241,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <ReplayIcon />
                     </ListItemIcon>
-                    Restart
+                    <Trans i18nKey="common.restart" />
                   </MenuItem>
                 )}
 
@@ -252,7 +253,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <RestartAltIcon />
                     </ListItemIcon>
-                    Reload
+                    <Trans i18nKey="common.reload" />
                   </MenuItem>
                 )}
 
@@ -264,7 +265,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <StopCircleIcon />
                     </ListItemIcon>
-                    Stop
+                    <Trans i18nKey="common.stop" />
                   </MenuItem>
                 ) : (
                   <MenuItem
@@ -274,7 +275,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <PlayArrowIcon />
                     </ListItemIcon>
-                    Start
+                    <Trans i18nKey="common.start" />
                   </MenuItem>
                 )}
 
@@ -285,7 +286,7 @@ export const Header = () => {
                   <ListItemIcon>
                     <BrowserUpdatedIcon />
                   </ListItemIcon>
-                  Update
+                  <Trans i18nKey="common.update" />
                 </MenuItem>
               </Menu>
             </Stack>
