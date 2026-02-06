@@ -55,9 +55,11 @@ export const FooterVersion = () => {
         </Tooltip>
       )}
 
-      <Stack direction="row" color="text.secondary">
-        /
-      </Stack>
+      {version && webVersion && (
+        <Stack direction="row" color="text.secondary">
+          /
+        </Stack>
+      )}
 
       {webVersion && (
         <Tooltip title="Web version" enterTouchDelay={0}>
