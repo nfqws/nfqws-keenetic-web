@@ -70,7 +70,7 @@ export const Header = () => {
       <Box
         sx={{
           px: 3,
-          py: 1.5,
+          py: 2.5,
           borderBottom: '1px solid',
           borderColor: 'divider',
           backgroundColor: 'background.paper',
@@ -82,12 +82,12 @@ export const Header = () => {
           alignItems="center"
           justifyContent="space-between"
           flexWrap="wrap"
+          gap={2}
         >
           <Stack
             direction="row"
-            spacing={1.5}
+            spacing={1.3}
             alignItems="baseline"
-            py={1}
             mr={2}
             flexGrow={1000}
           >
@@ -99,8 +99,8 @@ export const Header = () => {
               fontSize="1.25em"
               lineHeight={1}
               sx={{
-                '@media (max-width: 380px)': {
-                  fontSize: '1em',
+                '@media (max-width: 450px)': {
+                  fontSize: '0.85em',
                 },
               }}
             >
@@ -113,9 +113,11 @@ export const Header = () => {
               color="textPrimary"
               fontSize="1.131em"
               lineHeight={1}
+              pt="3px"
+              ml="-0.2em"
               sx={{
-                '@media (max-width: 380px)': {
-                  fontSize: '0.91em',
+                '@media (max-width: 450px)': {
+                  fontSize: '0.8em',
                 },
               }}
             >
@@ -129,7 +131,7 @@ export const Header = () => {
                   color: 'success.main',
                   alignSelf: 'center',
                   opacity: 0.9,
-                  '@media (max-width: 380px)': {
+                  '@media (max-width: 450px)': {
                     fontSize: '1em',
                   },
                 }}
@@ -141,7 +143,7 @@ export const Header = () => {
                   color: 'error.main',
                   alignSelf: 'center',
                   opacity: 0.9,
-                  '@media (max-width: 380px)': {
+                  '@media (max-width: 450px)': {
                     fontSize: '1em',
                   },
                 }}
@@ -152,7 +154,6 @@ export const Header = () => {
           <Stack
             direction="row"
             spacing={2}
-            py={1}
             flexGrow={1}
             justifyContent="flex-end"
           >

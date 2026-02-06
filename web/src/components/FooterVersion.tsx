@@ -15,7 +15,6 @@ export const FooterVersion = () => {
     <Stack
       direction="row"
       spacing={0.7}
-      alignItems="baseline"
       sx={{
         fontSize: 14,
         lineHeight: 1,
@@ -26,7 +25,6 @@ export const FooterVersion = () => {
         <Tooltip title={nfqws2 ? 'NFQWS2 version' : 'NFQWS version'}>
           <Stack
             direction="row"
-            alignItems="center"
             color="text.secondary"
             sx={{ gap: 0.5, display: 'inline-flex' }}
           >
@@ -54,7 +52,7 @@ export const FooterVersion = () => {
         </Tooltip>
       )}
 
-      <Stack direction="row" alignItems="center" color="text.secondary">
+      <Stack direction="row" color="text.secondary">
         /
       </Stack>
 
@@ -62,7 +60,6 @@ export const FooterVersion = () => {
         <Tooltip title="Web version">
           <Stack
             direction="row"
-            alignItems="center"
             color="text.secondary"
             sx={{ gap: 0.5, display: 'inline-flex' }}
           >

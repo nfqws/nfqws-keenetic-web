@@ -19,14 +19,32 @@ export const Footer = () => {
     <Box
       sx={{
         px: 3,
-        py: 2,
+        py: 1.5,
         borderTop: '1px solid',
         borderColor: 'divider',
         backgroundColor: 'background.paper',
       }}
     >
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" spacing={2} alignItems="baseline">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        gap={2}
+        flexWrap="wrap"
+        alignItems="center"
+      >
+        <Stack
+          direction="row"
+          spacing={2}
+          alignSelf="center"
+          fontSize={14}
+          sx={{
+            '& > *': {
+              display: 'inline-flex',
+              gap: 0.85,
+              alignItems: 'center',
+            },
+          }}
+        >
           <Link
             href="https://github.com/Anonym-tsk/nfqws-keenetic"
             target="_blank"
@@ -34,16 +52,14 @@ export const Footer = () => {
             color="text.secondary"
             sx={{
               display: 'inline-flex',
-              alignItems: 'center',
               gap: 0.85,
-              fontSize: 15,
-              lineHeight: 1,
+              fontSize: 14,
               '&:hover': {
                 color: 'primary.main',
               },
             }}
           >
-            <GitHubIcon sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+            <GitHubIcon sx={{ fontSize: '1.2em' }} />
             nfqws
           </Link>
 
@@ -54,16 +70,14 @@ export const Footer = () => {
             color="text.secondary"
             sx={{
               display: 'inline-flex',
-              alignItems: 'center',
               gap: 0.85,
-              fontSize: 15,
-              lineHeight: 1,
+              fontSize: 14,
               '&:hover': {
                 color: 'primary.main',
               },
             }}
           >
-            <GitHubIcon sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+            <GitHubIcon sx={{ fontSize: '1.2em' }} />
             nfqws2
           </Link>
 
@@ -74,16 +88,14 @@ export const Footer = () => {
             color="text.secondary"
             sx={{
               display: 'inline-flex',
-              alignItems: 'center',
               gap: 0.85,
-              fontSize: 15,
-              lineHeight: 1,
+              fontSize: 14,
               '&:hover': {
                 color: 'primary.main',
               },
             }}
           >
-            <GitHubIcon sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+            <GitHubIcon sx={{ fontSize: '1.2em' }} />
             web
           </Link>
 
@@ -93,10 +105,8 @@ export const Footer = () => {
             title="Change theme"
             sx={{
               display: 'inline-flex',
-              alignItems: 'center',
               gap: 0.85,
               fontSize: 15,
-              lineHeight: 1,
               '&:hover': {
                 color: 'primary.main',
               },
@@ -106,9 +116,9 @@ export const Footer = () => {
             }}
           >
             {mode === 'light' ? (
-              <DarkModeIcon sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+              <DarkModeIcon sx={{ fontSize: '1.2em' }} />
             ) : (
-              <LightModeIcon sx={{ fontSize: '1.2em', alignSelf: 'center' }} />
+              <LightModeIcon sx={{ fontSize: '1.2em' }} />
             )}
           </Link>
 
@@ -119,10 +129,8 @@ export const Footer = () => {
               title="Logout"
               sx={{
                 display: 'inline-flex',
-                alignItems: 'center',
                 gap: 0.85,
                 fontSize: 15,
-                lineHeight: 1,
                 '&:hover': {
                   color: 'primary.main',
                 },
@@ -132,9 +140,7 @@ export const Footer = () => {
                 void API.invalidateStatus();
               }}
             >
-              <LogoutOutlinedIcon
-                sx={{ fontSize: '1.2em', alignSelf: 'center' }}
-              />
+              <LogoutOutlinedIcon sx={{ fontSize: '1.2em' }} />
             </Link>
           )}
         </Stack>
