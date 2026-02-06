@@ -209,14 +209,14 @@ function authenticate($username, $password): bool
   $shadowFile = ROOT_DIR . '/etc/shadow';
 
   $users = file(file_exists($shadowFile) ? $shadowFile : $passwdFile);
-  $user = preg_grep("/^$username/", $users);
+  $user = preg_grep("/^" . preg_quote($username, '/') . ":/", $users);
 
   if ($user) {
     list(, $passwdInDB) = explode(':', array_pop($user));
     if (empty($passwdInDB)) {
       return empty($password);
     }
-    if (crypt($password, $passwdInDB) == $passwdInDB) {
+    if (hash_equals(crypt($password, $passwdInDB), $passwdInDB)) {
       return true;
     }
   }
