@@ -108,13 +108,20 @@ export const CheckDomainsDialog = ({
       disableEscapeKeyDown
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        {t('check_domains.title', { list: checkDomainsList })}
+        {t('check_domains.title')}
         <IconButton onClick={closeDialog} sx={{ ml: 'auto' }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ p: 2 }}>
+      <DialogContent
+        sx={{
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          maxHeight: '70svh',
+        }}
+      >
         <Paper
           variant="outlined"
           sx={{
@@ -135,6 +142,20 @@ export const CheckDomainsDialog = ({
               lineHeight: 1.5,
             }}
           >
+            <Typography
+              component="div"
+              sx={{ color: 'text.secondary', fontSize: 13 }}
+            >
+              {t('check_domains.list')}
+            </Typography>
+            <Typography
+              component="div"
+              sx={{ fontWeight: 700, fontSize: 13 }}
+              textAlign="right"
+            >
+              {checkDomainsList}
+            </Typography>
+
             <Typography
               component="div"
               sx={{ color: 'text.secondary', fontSize: 13 }}
@@ -211,7 +232,6 @@ export const CheckDomainsDialog = ({
         <Box
           sx={{
             mt: 1,
-            maxHeight: 360,
             overflow: 'auto',
           }}
         >

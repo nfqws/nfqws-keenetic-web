@@ -48,7 +48,8 @@
   },
   "check_domains": {
     "button": "Check domains",
-    "title": "Check domains: {{list}}",
+    "title": "Check domains",
+    "list": "List:",
     "total": "Total domains:",
     "available": "Available:",
     "blocked": "Blocked:",
