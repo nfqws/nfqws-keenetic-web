@@ -40,8 +40,14 @@ export const Header = () => {
 
   const config = useConfig(nfqws2);
 
-  const { needSave, onSave, setCheckDomainsList, needReload, setNeedReload } =
-    useAppStore();
+  const {
+    auth,
+    needSave,
+    onSave,
+    setCheckDomainsList,
+    needReload,
+    setNeedReload,
+  } = useAppStore();
 
   const [output, setOutput] = useState<boolean | string>(false);
 
@@ -132,7 +138,7 @@ export const Header = () => {
                 {config.title}
               </Typography>
 
-              {service ? (
+              {auth && service && (
                 <CloudDoneIcon
                   sx={{
                     fontSize: '1.25em',
@@ -144,7 +150,8 @@ export const Header = () => {
                     },
                   }}
                 />
-              ) : (
+              )}
+              {auth && !service && (
                 <CloudOffIcon
                   sx={{
                     fontSize: '1.25em',

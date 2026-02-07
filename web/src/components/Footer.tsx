@@ -30,6 +30,7 @@ export const Footer = () => {
         gap: 2,
         alignItems: 'center',
         lineHeight: '28px',
+        zIndex: 2000,
       }}
     >
       <Stack
