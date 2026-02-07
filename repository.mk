@@ -42,7 +42,7 @@ _repository:
 
 	echo "Package: nfqws-keenetic-web" >> out/_pages/$(BUILD_DIR)/Packages
 	echo "Version: $(VERSION)" >> out/_pages/$(BUILD_DIR)/Packages
-	echo "Depends: php8-cgi, php8-mod-session, lighttpd, lighttpd-mod-cgi, lighttpd-mod-setenv, lighttpd-mod-rewrite, lighttpd-mod-redirect" >> out/_pages/$(BUILD_DIR)/Packages
+	echo "Depends: php8-cgi, php8-mod-session, php8-mod-curl, lighttpd, lighttpd-mod-cgi, lighttpd-mod-setenv, lighttpd-mod-rewrite, lighttpd-mod-redirect" >> out/_pages/$(BUILD_DIR)/Packages
 	echo "Section: net" >> out/_pages/$(BUILD_DIR)/Packages
 	echo "Architecture: all" >> out/_pages/$(BUILD_DIR)/Packages
 	echo "Filename: $(WEB)" >> out/_pages/$(BUILD_DIR)/Packages

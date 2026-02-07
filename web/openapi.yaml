@@ -65,6 +65,7 @@ components:
         - $ref: '#/components/schemas/ServiceActionRequest'
         - $ref: '#/components/schemas/LoginRequest'
         - $ref: '#/components/schemas/LogoutRequest'
+        - $ref: '#/components/schemas/CheckRequest'
       discriminator:
         propertyName: cmd
         mapping:
@@ -80,6 +81,7 @@ components:
           upgrade: '#/components/schemas/ServiceActionRequest'
           login: '#/components/schemas/LoginRequest'
           logout: '#/components/schemas/LogoutRequest'
+          check: '#/components/schemas/CheckRequest'
 
     StatusRequest:
       type: object
@@ -170,6 +172,17 @@ components:
           enum: [logout]
       additionalProperties: false
 
+    CheckRequest:
+      type: object
+      required: [cmd, url]
+      properties:
+        cmd:
+          type: string
+          enum: [check]
+        url:
+          type: string
+      additionalProperties: false
+
     # -----------------------------
     # Responses (discriminator by cmd)
     # -----------------------------
@@ -183,6 +196,7 @@ components:
         - $ref: '#/components/schemas/ActionResponse'
         - $ref: '#/components/schemas/LoginResponse'
         - $ref: '#/components/schemas/LogoutResponse'
+        - $ref: '#/components/schemas/CheckResponse'
 
     StatusResponse:
       type: object
@@ -305,6 +319,21 @@ components:
       additionalProperties: false
       example:
         status: 0
+
+    CheckResponse:
+      type: object
+      required: [status, result]
+      properties:
+        status:
+          type: integer
+          description: 0 = ok, non-zero = error
+        result:
+          type: boolean
+          description: Check result
+      additionalProperties: false
+      example:
+        status: 0
+        result: true
 
     # -----------------------------
     # Errors

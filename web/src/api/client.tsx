@@ -10,6 +10,7 @@ import { createAPIClient } from '@/api/create-api-client';
 import {
   type ActionResponse,
   type ApiError,
+  type CheckResponse,
   type FileContentResponse,
   type FilenamesRequest,
   type FilenamesResponse,
@@ -113,4 +114,9 @@ export const API = {
     apiClient.indexPhp.postIndexCmd({ body: { cmd: 'logout' } }) as Promise<
       RequestFnResponse<LogoutResponse, ApiError>
     >,
+
+  check: async (url: string) =>
+    apiClient.indexPhp.postIndexCmd({
+      body: { cmd: 'check', url },
+    }) as Promise<RequestFnResponse<CheckResponse, ApiError>>,
 } as const;

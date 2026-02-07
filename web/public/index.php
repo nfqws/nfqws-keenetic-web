@@ -25,6 +25,91 @@ function normalizeString(string $s): string
   return $s;
 }
 
+/**
+ * Делает GET, проверяет финальный HTTP-статус 2xx и то, что тело реально начало приходить.
+ * Читает максимум первые $limitKb КБ и обрывает соединение после этого.
+ * 204 No Content считается OK даже без тела.
+ */
+function checkResponseBodyReadable(string $url, int $limitKb = 50): bool
+{
+  $limitBytes = $limitKb * 1024;
+
+  $received = 0;
+  $statusCode = null;
+  $statusOk = false;
+  $bodyStarted = false;
+  $reachedLimit = false;
+
+  $ch = curl_init($url);
+
+  curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => false,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_MAXREDIRS => 5,
+    CURLOPT_TIMEOUT => 15,
+    CURLOPT_CONNECTTIMEOUT => 5,
+    // Helpful on embedded/POSIX systems so timeouts don't rely on signals
+    CURLOPT_NOSIGNAL => 1,
+
+    // Читаем статус (последний, с учётом редиректов)
+    CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$statusOk, &$statusCode) {
+      if (preg_match('#^HTTP/\d+\.\d+\s+(\d+)#', $header, $m)) {
+        $code = (int)$m[1];
+        $statusCode = $code;
+        $statusOk = ($code >= 200 && $code < 300);
+      }
+      return strlen($header);
+    },
+
+    // Читаем тело, но не сохраняем
+    CURLOPT_WRITEFUNCTION => function ($ch, $chunk) use (
+      &$received,
+      $limitBytes,
+      &$statusOk,
+      &$bodyStarted,
+      &$reachedLimit
+    ) {
+      // Если статус не 2xx — дальше тело читать не надо
+      if (!$statusOk) {
+        return 0;
+      }
+
+      $len = strlen($chunk);
+      if ($len > 0) {
+        $bodyStarted = true;
+        $received += $len;
+      }
+
+      // если дошли до лимита — обрываем
+      if ($received >= $limitBytes) {
+        $reachedLimit = true;
+        return 0;
+      }
+
+      return $len;
+    },
+
+    // Если соединение "подвисло" и не качает — быстрее возвращаемся
+    CURLOPT_LOW_SPEED_LIMIT => 1,  // bytes/sec
+    CURLOPT_LOW_SPEED_TIME => 10,  // seconds
+  ]);
+
+  curl_exec($ch);
+  curl_close($ch);
+
+  // 204 считаем ок даже без тела
+  if ($statusOk && $statusCode === 204) {
+    return true;
+  }
+
+  // Для остальных 2xx: true если тело реально начало приходить.
+  if ($statusOk && ($bodyStarted || $reachedLimit)) {
+    return true;
+  }
+
+  return false;
+}
+
 function getFiles(string $type = null): array
 {
   $result = [];
@@ -290,6 +375,10 @@ function main(): void
     case 'logout':
       $_SESSION['auth'] = false;
       $response = array('status' => 0);
+      break;
+
+    case 'check':
+      $response = array('status' => 0, 'result' => checkResponseBodyReadable($_POST['url']));
       break;
 
     default:

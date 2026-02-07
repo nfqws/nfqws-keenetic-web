@@ -1,6 +1,13 @@
+import { API } from '@/api/client';
+
 const FETCH_TIMEOUT = 3000;
 const IMAGE_TIMEOUT = 2000;
-const MAX_REQUESTS = 10;
+const MAX_REQUESTS = 3;
+
+const checkWithProxy = async (domain: string) => {
+  const { data, error } = await API.check(`https://${domain}`);
+  return !error && data?.status === 0 && data?.result;
+};
 
 const checkWithFetch = async (domain: string) => {
   const controller = new AbortController();
@@ -53,10 +60,17 @@ const checkWithImage = async (domain: string) => {
 };
 
 export const checkDomain = async (domain: string) => {
-  if (!(await checkWithFetch(domain))) {
-    return checkWithImage(domain);
+  const step1 = await checkWithProxy(domain);
+  if (step1) {
+    return true;
   }
-  return true;
+
+  const step2 = await checkWithFetch(domain);
+  if (step2) {
+    return true;
+  }
+
+  return checkWithImage(domain);
 };
 
 export const parseListFile = (list: string) => {

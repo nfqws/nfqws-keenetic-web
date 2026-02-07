@@ -11,7 +11,7 @@ define Package/nfqws-keenetic-web
   TITLE:=nfqws-keenetic-web
   SECTION:=net
   CATEGORY:=Networking
-  DEPENDS:=+php8-cgi +php8-mod-session +lighttpd +lighttpd-mod-cgi +lighttpd-mod-setenv +lighttpd-mod-rewrite +lighttpd-mod-redirect
+  DEPENDS:=+php8-cgi +php8-mod-session +php8-mod-curl +lighttpd +lighttpd-mod-cgi +lighttpd-mod-setenv +lighttpd-mod-rewrite +lighttpd-mod-redirect
   PKGARCH:=all
   URL:=https://github.com/nfqws/nfqws-keenetic-web
   VERSION:=$(PKG_VERSION)
