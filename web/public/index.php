@@ -46,7 +46,7 @@ function checkResponseBodyReadable(string $url, int $limitKb = 50): bool
     CURLOPT_RETURNTRANSFER => false,
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_MAXREDIRS => 5,
-    CURLOPT_TIMEOUT => 15,
+    CURLOPT_TIMEOUT => 5,
     CURLOPT_CONNECTTIMEOUT => 5,
     // Helpful on embedded/POSIX systems so timeouts don't rely on signals
     CURLOPT_NOSIGNAL => 1,
@@ -97,17 +97,22 @@ function checkResponseBodyReadable(string $url, int $limitKb = 50): bool
   curl_exec($ch);
   curl_close($ch);
 
-  // 204 считаем ок даже без тела
-  if ($statusOk && $statusCode === 204) {
-    return true;
-  }
+//  // 204 считаем ок даже без тела
+//  if ($statusOk && $statusCode === 204) {
+//    return true;
+//  }
+//
+//  // Для остальных 2xx: true если тело реально начало приходить.
+//  if ($statusOk && ($bodyStarted || $reachedLimit)) {
+//    return true;
+//  }
+//
+//  return false;
 
-  // Для остальных 2xx: true если тело реально начало приходить.
-  if ($statusOk && ($bodyStarted || $reachedLimit)) {
-    return true;
-  }
-
-  return false;
+  // Считаем запрос успешным, если мы вообще получили HTTP-ответ (любой код: 2xx/3xx/4xx/5xx).
+  // Неуспех — это когда ответа нет совсем (DNS не резолвится, таймаут, нет соединения и т.п.),
+  // в этом случае статусная строка не будет получена и $statusCode останется null.
+  return $statusCode !== null;
 }
 
 function getFiles(string $type = null): array
