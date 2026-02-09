@@ -236,6 +236,7 @@ export const FilesTabs = () => {
       <CreateFileDialog
         open={createDialog}
         onClose={() => setCreateDialog(false)}
+        existingNames={files.map((file) => file.name)}
       />
 
       <ConfirmationDialog

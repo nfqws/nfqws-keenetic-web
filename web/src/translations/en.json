@@ -58,6 +58,7 @@
   "create_file": {
     "title": "Create list",
     "error": "Failed to create file",
+    "exists": "A file with this name already exists",
     "create": "Create new file",
     "name_title": "File name"
   },

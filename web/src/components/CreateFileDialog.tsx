@@ -18,32 +18,50 @@ import { useTranslation } from '@/hooks/useTranslation';
 export const CreateFileDialog = ({
   open,
   onClose,
+  existingNames,
 }: {
   open: boolean;
   onClose: VoidFunction;
+  existingNames: string[];
 }) => {
   const [name, setName] = useState('');
-  const [error, setError] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
   const { t } = useTranslation();
 
+  const trimmedName = name.trim();
+  const filename = `${trimmedName}.list`;
+  const exists = trimmedName.length > 0 && existingNames.includes(filename);
+
   const handleClose = useCallback(() => {
     onClose();
     setName('');
-    setError(false);
+    setSaveError(false);
+    setSubmitted(false);
   }, [onClose]);
 
   const handleSubmit = useCallback(async () => {
-    const { data } = await API.saveFile(`${name}.list`, '');
+    setSubmitted(true);
+    if (!trimmedName || exists) {
+      return;
+    }
+    setSaveError(false);
+    const { data } = await API.saveFile(filename, '');
     if (data?.status === 0) {
       handleClose();
       await API.invalidateListFiles();
-      void navigate({ to: `/lists/${name}.list` });
+      void navigate({ to: `/lists/${filename}` });
     } else {
-      setError(true);
+      setSaveError(true);
     }
-  }, [handleClose, name, navigate]);
+  }, [exists, filename, handleClose, navigate, trimmedName]);
+
+  const showError = (submitted && exists) || saveError;
+  const errorMessage = exists
+    ? t('create_file.exists')
+    : t('create_file.error');
 
   return (
     <Dialog
@@ -71,7 +89,11 @@ export const CreateFileDialog = ({
           fullWidth
           variant="outlined"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setSaveError(false);
+            setSubmitted(false);
+          }}
           slotProps={{
             input: {
               endAdornment: (
@@ -84,15 +106,15 @@ export const CreateFileDialog = ({
           sx={{ mb: 2, mt: 1 }}
         />
 
-        {error && (
+        {showError && (
           <Alert severity="error" variant="outlined" sx={{ mb: 1 }}>
-            {t('create_file.error')}
+            {errorMessage}
           </Alert>
         )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>{t('common.cancel')}</Button>
-        <Button onClick={handleSubmit} disabled={!name.length}>
+        <Button onClick={handleSubmit} disabled={!trimmedName.length}>
           {t('common.create')}
         </Button>
       </DialogActions>
