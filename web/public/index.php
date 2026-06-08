@@ -294,7 +294,7 @@ function nfqwsServiceAction(string $action): array
   return array('output' => $output, 'status' => $retval);
 }
 
-function nfqwsInstalledVersion(): string
+function nfqwsInstalledVersionOpkg(): string
 {
   $output = null;
   if (NFQWS2) {
@@ -303,6 +303,23 @@ function nfqwsInstalledVersion(): string
     exec("opkg status nfqws-keenetic | awk -F': ' '/^Version:/ {print $2}'", $output);
   }
   return $output[0] ?? '';
+}
+
+function nfqwsInstalledVersionApk(): string
+{
+  $output = null;
+  if (NFQWS2) {
+    exec("apk list --installed nfqws2-keenetic | awk -F'nfqws2-keenetic-| ' '{print $2}'", $output);
+  } else {
+    exec("apk list --installed nfqws-keenetic | awk -F'nfqws2-keenetic-| ' '{print $2}'", $output);
+  }
+  return $output[0] ?? '';
+}
+
+
+function nfqwsInstalledVersion(): string
+{
+  return file_exists('/usr/bin/apk') ? nfqwsInstalledVersionApk() : nfqwsInstalledVersionOpkg();
 }
 
 function opkgUpgradeAction(): array
