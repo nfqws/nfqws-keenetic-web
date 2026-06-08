@@ -342,9 +342,9 @@ function apkUpgradeAction(): array
   $output = null;
   $retval = null;
   if (NFQWS2) {
-    exec("apk --update-cache add nfqws2-keenetic nfqws-keenetic-web", $output, $retval);
+    exec("apk -U upgrade nfqws2-keenetic nfqws-keenetic-web", $output, $retval);
   } else {
-    exec("apk --update-cache add nfqws-keenetic nfqws-keenetic-web", $output, $retval);
+    exec("apk -U upgrade nfqws-keenetic nfqws-keenetic-web", $output, $retval);
   }
   if (empty($output)) {
     $output[] = 'Nothing to update';
