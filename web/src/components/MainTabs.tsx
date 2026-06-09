@@ -2,6 +2,7 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import { Box, Tab, Tabs } from '@mui/material';
 import { useNavigate, useParams } from '@tanstack/react-router';
 
@@ -125,6 +126,25 @@ export const MainTabs = () => {
               }}
             />
           )}
+
+          <Tab
+            key="files"
+            value="files"
+            icon={<FolderOutlinedIcon fontSize="small" />}
+            iconPosition="start"
+            label={t('tabs.files')}
+            sx={{
+              minHeight: '50px',
+              fontSize: 14,
+              transition: 'color 0.1s ease-in-out',
+              '&.Mui-selected': {
+                color: 'text.primary',
+              },
+              '&:hover': {
+                color: 'text.primary',
+              },
+            }}
+          />
         </Tabs>
       </Box>
     </>

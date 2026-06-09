@@ -1,6 +1,10 @@
 import { type ReactNode } from 'react';
 import { Backdrop, Box, CircularProgress, Typography } from '@mui/material';
-import { useBlocker, type AnyRouter } from '@tanstack/react-router';
+import {
+  useBlocker,
+  useParams,
+  type AnyRouter,
+} from '@tanstack/react-router';
 
 import { CheckDomainsDialog } from '@/components/CheckDomainsDialog';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
@@ -9,6 +13,8 @@ import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { LoginDialog } from '@/components/LoginDialog';
 import { MainTabs } from '@/components/MainTabs';
+
+import { type MainTabsValues } from '@/types/types';
 
 import { useAppStore } from '@/store/useAppStore';
 
@@ -20,6 +26,10 @@ export function App({ children }: { children?: ReactNode }) {
     useAppStore();
 
   const { t } = useTranslation();
+
+  const { tab } = useParams({ strict: false }) as {
+    tab?: MainTabsValues;
+  };
 
   const { isPending, status } = useStatus();
   const nfqwsInstalled = isPending || status;
@@ -40,7 +50,7 @@ export function App({ children }: { children?: ReactNode }) {
 
       <MainTabs />
 
-      {nfqwsInstalled && auth && <FilesTabs />}
+      {nfqwsInstalled && auth && tab !== 'files' && <FilesTabs />}
 
       <Box flex={1} sx={{ display: 'flex', position: 'relative' }}>
         {auth === undefined || isPending || !nfqwsInstalled ? (

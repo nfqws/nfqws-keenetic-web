@@ -63,6 +63,10 @@ components:
         - $ref: '#/components/schemas/FileCreateRequest'
         - $ref: '#/components/schemas/FileSaveRequest'
         - $ref: '#/components/schemas/FileRemoveRequest'
+        - $ref: '#/components/schemas/BlobFilesRequest'
+        - $ref: '#/components/schemas/BlobUploadRequest'
+        - $ref: '#/components/schemas/BlobRemoveRequest'
+        - $ref: '#/components/schemas/BlobDownloadRequest'
         - $ref: '#/components/schemas/ServiceActionRequest'
         - $ref: '#/components/schemas/LoginRequest'
         - $ref: '#/components/schemas/LogoutRequest'
@@ -76,6 +80,10 @@ components:
           filecreate: '#/components/schemas/FileCreateRequest'
           filesave: '#/components/schemas/FileSaveRequest'
           fileremove: '#/components/schemas/FileRemoveRequest'
+          blobfiles: '#/components/schemas/BlobFilesRequest'
+          blobupload: '#/components/schemas/BlobUploadRequest'
+          blobremove: '#/components/schemas/BlobRemoveRequest'
+          blobdownload: '#/components/schemas/BlobDownloadRequest'
           reload: '#/components/schemas/ServiceActionRequest'
           restart: '#/components/schemas/ServiceActionRequest'
           stop: '#/components/schemas/ServiceActionRequest'
@@ -196,6 +204,51 @@ components:
           type: string
       additionalProperties: false
 
+    BlobFilesRequest:
+      type: object
+      required: [cmd]
+      properties:
+        cmd:
+          type: string
+          enum: [blobfiles]
+      additionalProperties: false
+
+    BlobUploadRequest:
+      type: object
+      required: [cmd, file]
+      properties:
+        cmd:
+          type: string
+          enum: [blobupload]
+        file:
+          type: string
+          format: binary
+          description: Binary blob file (.bin)
+      additionalProperties: false
+
+    BlobRemoveRequest:
+      type: object
+      required: [cmd, filename]
+      properties:
+        cmd:
+          type: string
+          enum: [blobremove]
+        filename:
+          type: string
+      additionalProperties: false
+
+    BlobDownloadRequest:
+      type: object
+      required: [cmd, filename]
+      properties:
+        cmd:
+          type: string
+          enum: [blobdownload]
+        filename:
+          type: string
+      additionalProperties: false
+      description: Downloads a blob file as binary octet-stream.
+
     # -----------------------------
     # Responses (discriminator by cmd)
     # -----------------------------
@@ -207,6 +260,9 @@ components:
         - $ref: '#/components/schemas/FileCreateResponse'
         - $ref: '#/components/schemas/FileSaveResponse'
         - $ref: '#/components/schemas/FileRemoveResponse'
+        - $ref: '#/components/schemas/BlobFilesResponse'
+        - $ref: '#/components/schemas/BlobUploadResponse'
+        - $ref: '#/components/schemas/BlobRemoveResponse'
         - $ref: '#/components/schemas/ActionResponse'
         - $ref: '#/components/schemas/LoginResponse'
         - $ref: '#/components/schemas/LogoutResponse'
@@ -313,6 +369,51 @@ components:
       example:
         status: 0
         filename: "custom.list"
+
+    BlobFilesResponse:
+      type: object
+      required: [status, files]
+      properties:
+        status:
+          type: integer
+          enum: [0]
+        files:
+          type: array
+          items: { type: string }
+      additionalProperties: false
+      example:
+        status: 0
+        files: ["example.bin"]
+
+    BlobUploadResponse:
+      type: object
+      required: [status, filename]
+      properties:
+        status:
+          type: integer
+          description: 0 = ok, 1 = failed
+          enum: [0, 1]
+        filename:
+          type: string
+      additionalProperties: false
+      example:
+        status: 0
+        filename: "example.bin"
+
+    BlobRemoveResponse:
+      type: object
+      required: [status, filename]
+      properties:
+        status:
+          type: integer
+          description: 0 = ok, 1 = failed
+          enum: [0, 1]
+        filename:
+          type: string
+      additionalProperties: false
+      example:
+        status: 0
+        filename: "example.bin"
 
     ActionResponse:
       type: object

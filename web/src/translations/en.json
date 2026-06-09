@@ -18,7 +18,8 @@
     "settings": "Settings",
     "lists": "Lists",
     "logs": "Logs",
-    "scripts": "Scripts"
+    "scripts": "Scripts",
+    "files": "Files"
   },
   "common": {
     "start": "Start",
@@ -60,6 +61,14 @@
     "error": "Failed to create file",
     "create": "Create new file",
     "name_title": "File name"
+  },
+  "blobs": {
+    "upload": "Upload .bin",
+    "delete": "Delete file",
+    "download": "Download file",
+    "path": "Path: {{path}}",
+    "empty": "No files in blobs directory",
+    "error": "Failed to process file"
   },
   "update": {
     "version_title": "{{app}} version",

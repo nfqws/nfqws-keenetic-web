@@ -3,9 +3,10 @@ import { createFileRoute, notFound } from '@tanstack/react-router';
 
 import { API } from '@/api/client';
 
-import { mainTabsValues } from '@/types/types';
+import { mainTabsValues, type MainTabsValues } from '@/types/types';
 
 import { App } from '@/components/App';
+import { BlobFilesPanel } from '@/components/BlobFilesPanel';
 import { Editor } from '@/components/Editor';
 import { Error404 } from '@/components/Error404';
 
@@ -20,7 +21,7 @@ export const Route = createFileRoute('/$tab/{-$filename}')({
   notFoundComponent: Error404,
   params: {
     parse: (params) => {
-      if (!mainTabsValues.includes(params.tab)) {
+      if (!mainTabsValues.includes(params.tab as MainTabsValues)) {
         throw notFound();
       }
       return params;
@@ -31,6 +32,24 @@ export const Route = createFileRoute('/$tab/{-$filename}')({
 function RouteComponent() {
   const { tab, filename } = Route.useParams();
 
+  if (tab === 'files') {
+    return (
+      <App>
+        <BlobFilesPanel />
+      </App>
+    );
+  }
+
+  return <EditorTabContent tab={tab} filename={filename} />;
+}
+
+function EditorTabContent({
+  tab,
+  filename,
+}: {
+  tab: Exclude<MainTabsValues, 'files'>;
+  filename?: string;
+}) {
   const {
     findFile,
     isPending: isPendingNames,
@@ -45,18 +64,20 @@ function RouteComponent() {
 
   const { setNeedSave, setOnSave, needSave, auth } = useAppStore();
 
+  const selectedFile = currentFile || '';
+
   const { data: originalContent, isPending } = API.fileContent(
-    currentFile,
+    selectedFile,
     auth && Boolean(currentFile),
   );
 
-  const fileInfo = findFile(currentFile);
+  const fileInfo = currentFile ? findFile(currentFile) : undefined;
 
   const [content, setContent] = useState<string | undefined>();
   const contentRef = useRef<string | undefined>(undefined);
 
   const onSave = useCallback(async () => {
-    if (!needSave) {
+    if (!needSave || !currentFile) {
       return;
     }
 

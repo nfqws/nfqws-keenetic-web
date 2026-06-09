@@ -10,6 +10,9 @@ import { createAPIClient } from '@/api/create-api-client';
 import {
   type ActionResponse,
   type ApiError,
+  type BlobFilesResponse,
+  type BlobRemoveResponse,
+  type BlobUploadResponse,
   type CheckResponse,
   type FileContentResponse,
   type FileCreateResponse,
@@ -69,6 +72,18 @@ export const API = {
       body: { cmd: 'filenames', type },
     }) as UseQueryResult<FilenamesResponse, OperationError<ApiError>>,
 
+  listBlobFiles: () =>
+    apiClient.indexPhp.postIndexCmd.useQuery({
+      body: { cmd: 'blobfiles' },
+    }) as UseQueryResult<BlobFilesResponse, OperationError<ApiError>>,
+
+  invalidateBlobFiles: async () => {
+    const key = apiClient.indexPhp.postIndexCmd.getQueryKey({
+      body: { cmd: 'blobfiles' },
+    });
+    return queryClient.invalidateQueries({ queryKey: key });
+  },
+
   invalidateListFiles: async () => {
     const key = apiClient.indexPhp.postIndexCmd.getQueryKey({
       body: { cmd: 'filenames' },
@@ -105,6 +120,40 @@ export const API = {
     apiClient.indexPhp.postIndexCmd({
       body: { cmd: 'fileremove', filename },
     }) as Promise<RequestFnResponse<FileRemoveResponse, ApiError>>,
+
+  uploadBlobFile: async (file: File) =>
+    apiClient.indexPhp.postIndexCmd({
+      body: { cmd: 'blobupload', file },
+    }) as Promise<RequestFnResponse<BlobUploadResponse, ApiError>>,
+
+  removeBlobFile: async (filename: string) =>
+    apiClient.indexPhp.postIndexCmd({
+      body: { cmd: 'blobremove', filename },
+    }) as Promise<RequestFnResponse<BlobRemoveResponse, ApiError>>,
+
+  downloadBlobFile: async (filename: string) => {
+    const body = new FormData();
+    body.append('cmd', 'blobdownload');
+    body.append('filename', filename);
+
+    const response = await fetch(`${baseUrl}/index.php`, {
+      method: 'POST',
+      body,
+      credentials: 'same-origin',
+    });
+
+    if (response.status === 401) {
+      useAppStore.getState().setAuth(false);
+      throw new Error('Unauthorized');
+    }
+
+    if (!response.ok) {
+      throw new Error('Failed to download blob file');
+    }
+
+    useAppStore.getState().setAuth(true);
+    return response.blob();
+  },
 
   action: async (cmd: ServiceActionRequest['cmd']) =>
     apiClient.indexPhp.postIndexCmd({ body: { cmd } }) as Promise<

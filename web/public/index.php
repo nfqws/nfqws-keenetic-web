@@ -10,6 +10,8 @@ const CONF_DIR = NFQWS2 ? '/etc/nfqws2' : '/etc/nfqws';
 const LISTS_DIR = NFQWS2 ? '/etc/nfqws2/lists' : '/etc/nfqws';
 const LOGS_DIR = '/var/log';
 const LUA_DIR = '/etc/nfqws2/lua';
+const BLOBS_DIR_NFQWS2 = '/etc/nfqws2/blobs';
+const BLOBS_DIR_NFQWS = '/etc/nfqws';
 
 function normalizeString(string $s): string
 {
@@ -273,6 +275,108 @@ function removeFile(string $filename): bool
   }
 }
 
+function getBlobDirPath(): string
+{
+  return ROOT_DIR . (NFQWS2 ? BLOBS_DIR_NFQWS2 : BLOBS_DIR_NFQWS);
+}
+
+function isValidBlobFilename(string $filename): bool
+{
+  return preg_match('/^[a-zA-Z0-9_-]+\.bin$/i', $filename) === 1;
+}
+
+function getBlobFiles(): array
+{
+  $dir = getBlobDirPath();
+  if (!is_dir($dir)) {
+    return [];
+  }
+
+  $entries = scandir($dir);
+  if ($entries === false) {
+    return [];
+  }
+
+  $files = array_values(array_filter($entries, function ($entry) {
+    if ($entry === '.' || $entry === '..') {
+      return false;
+    }
+    $path = getBlobDirPath() . '/' . $entry;
+    return is_file($path) && preg_match('/\.bin$/i', $entry);
+  }));
+
+  natcasesort($files);
+  return array_values($files);
+}
+
+function uploadBlobFile(array $file): array
+{
+  $filename = basename((string)($file['name'] ?? ''));
+  if ($filename === '' || !isValidBlobFilename($filename)) {
+    return array('status' => 1, 'filename' => $filename);
+  }
+
+  if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !isset($file['tmp_name'])) {
+    return array('status' => 1, 'filename' => $filename);
+  }
+
+  $dir = getBlobDirPath();
+  if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
+    return array('status' => 1, 'filename' => $filename);
+  }
+
+  $path = $dir . '/' . $filename;
+  if (file_exists($path)) {
+    return array('status' => 1, 'filename' => $filename);
+  }
+
+  $result = move_uploaded_file($file['tmp_name'], $path);
+  return array('status' => $result ? 0 : 1, 'filename' => $filename);
+}
+
+function removeBlobFile(string $filename): array
+{
+  $filename = basename($filename);
+  if ($filename === '' || !isValidBlobFilename($filename)) {
+    return array('status' => 1, 'filename' => $filename);
+  }
+
+  $path = getBlobDirPath() . '/' . $filename;
+  if (!file_exists($path)) {
+    return array('status' => 1, 'filename' => $filename);
+  }
+
+  $result = unlink($path);
+  return array('status' => $result ? 0 : 1, 'filename' => $filename);
+}
+
+function downloadBlobFile(string $filename): void
+{
+  $filename = basename($filename);
+  if ($filename === '' || !isValidBlobFilename($filename)) {
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(400);
+    echo json_encode(array('status' => 1, 'filename' => $filename));
+    exit();
+  }
+
+  $path = getBlobDirPath() . '/' . $filename;
+  if (!is_file($path)) {
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(404);
+    echo json_encode(array('status' => 1, 'filename' => $filename));
+    exit();
+  }
+
+  header('Content-Description: File Transfer');
+  header('Content-Type: application/octet-stream');
+  header('Content-Disposition: attachment; filename="' . $filename . '"');
+  header('Content-Length: ' . filesize($path));
+  header('Cache-Control: no-store, no-cache, must-revalidate');
+  readfile($path);
+  exit();
+}
+
 function nfqwsServiceStatus(): array
 {
   $output = null;
@@ -432,6 +536,22 @@ function main(): void
     case 'fileremove':
       $result = removeFile($_POST['filename']);
       $response = array('status' => $result ? 0 : 1, 'filename' => $_POST['filename']);
+      break;
+
+    case 'blobfiles':
+      $response = array('status' => 0, 'files' => getBlobFiles());
+      break;
+
+    case 'blobupload':
+      $response = uploadBlobFile($_FILES['file'] ?? []);
+      break;
+
+    case 'blobremove':
+      $response = removeBlobFile($_POST['filename'] ?? '');
+      break;
+
+    case 'blobdownload':
+      downloadBlobFile($_POST['filename'] ?? '');
       break;
 
     case 'reload':
