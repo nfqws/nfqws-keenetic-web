@@ -434,7 +434,6 @@ function main(): void
       $response = array('status' => $result ? 0 : 1, 'filename' => $_POST['filename']);
       break;
 
-    case 'reload':
     case 'restart':
     case 'stop':
     case 'start':

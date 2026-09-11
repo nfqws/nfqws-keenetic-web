@@ -89,7 +89,6 @@ export const handlers = [
         return HttpResponse.json(body);
       }
 
-      case 'reload':
       case 'restart':
       case 'stop':
       case 'start':

@@ -24,7 +24,6 @@
     "start": "Start",
     "stop": "Stop",
     "restart": "Restart",
-    "reload": "Reload",
     "update": "Update",
     "cancel": "Cancel",
     "create": "Create",
