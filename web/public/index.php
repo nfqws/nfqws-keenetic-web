@@ -386,9 +386,15 @@ function main(): void
     exit();
   }
 
+  if (!isset($_POST['cmd'])) {
+    http_response_code(400);
+    exit();
+  }
+
   $config = parse_ini_file(CONF_FILE, true);
   $authEnabled = $config['auth']['enabled'];
 
+  session_set_cookie_params(['httponly' => true, 'samesite' => 'Strict']);
   session_start();
   if ($authEnabled && (!isset($_SESSION['auth']) || !$_SESSION['auth'])) {
     if ($_POST['cmd'] !== 'login' || !isset($_POST['user']) || !isset($_POST['password']) || !authenticate($_POST['user'], $_POST['password'])) {
@@ -396,6 +402,20 @@ function main(): void
       exit();
     } else {
       $_SESSION['auth'] = true;
+    }
+  }
+
+  $requiredParams = array(
+    'filecontent' => array('filename'),
+    'filecreate' => array('filename'),
+    'filesave' => array('filename', 'content'),
+    'fileremove' => array('filename'),
+    'check' => array('url'),
+  );
+  foreach ($requiredParams[$_POST['cmd']] ?? array() as $param) {
+    if (!isset($_POST[$param])) {
+      http_response_code(400);
+      exit();
     }
   }
 
