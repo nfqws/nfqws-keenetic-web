@@ -76,7 +76,6 @@ components:
           filecreate: '#/components/schemas/FileCreateRequest'
           filesave: '#/components/schemas/FileSaveRequest'
           fileremove: '#/components/schemas/FileRemoveRequest'
-          reload: '#/components/schemas/ServiceActionRequest'
           restart: '#/components/schemas/ServiceActionRequest'
           stop: '#/components/schemas/ServiceActionRequest'
           start: '#/components/schemas/ServiceActionRequest'
@@ -161,7 +160,7 @@ components:
       properties:
         cmd:
           type: string
-          enum: [reload, restart, stop, start, upgrade]
+          enum: [restart, stop, start, upgrade]
       additionalProperties: false
 
     LoginRequest:

@@ -7,7 +7,6 @@ import CloudOffIcon from '@mui/icons-material/CloudOff';
 import MenuIcon from '@mui/icons-material/Menu';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ReplayIcon from '@mui/icons-material/Replay';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SaveIcon from '@mui/icons-material/Save';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import {
@@ -262,18 +261,6 @@ export const Header = () => {
                       <ReplayIcon />
                     </ListItemIcon>
                     <Trans i18nKey="common.restart" />
-                  </MenuItem>
-                )}
-
-                {service && (
-                  <MenuItem
-                    onClick={() => handleMenuClick('reload')}
-                    sx={{ fontSize: 14 }}
-                  >
-                    <ListItemIcon>
-                      <RestartAltIcon />
-                    </ListItemIcon>
-                    <Trans i18nKey="common.reload" />
                   </MenuItem>
                 )}
 
