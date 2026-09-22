@@ -386,7 +386,7 @@ function main(): void
     exit();
   }
 
-  if (!isset($_POST['cmd'])) {
+  if (!is_string($_POST['cmd'] ?? null)) {
     http_response_code(400);
     exit();
   }
