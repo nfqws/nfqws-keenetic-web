@@ -413,7 +413,7 @@ function main(): void
     'check' => array('url'),
   );
   foreach ($requiredParams[$_POST['cmd']] ?? array() as $param) {
-    if (!isset($_POST[$param])) {
+    if (!is_string($_POST[$param] ?? null)) {
       http_response_code(400);
       exit();
     }
