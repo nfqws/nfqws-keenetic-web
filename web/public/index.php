@@ -311,7 +311,7 @@ function nfqwsInstalledVersionApk(): string
   if (NFQWS2) {
     exec("apk list --installed nfqws2-keenetic | awk -F'nfqws2-keenetic-| ' '{print $2}'", $output);
   } else {
-    exec("apk list --installed nfqws-keenetic | awk -F'nfqws2-keenetic-| ' '{print $2}'", $output);
+    exec("apk list --installed nfqws-keenetic | awk -F'nfqws-keenetic-| ' '{print $2}'", $output);
   }
   return $output[0] ?? '';
 }
