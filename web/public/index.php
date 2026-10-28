@@ -5,11 +5,26 @@ ini_set('memory_limit', '32M');
 define('NFQWS2', file_exists('/opt/usr/bin/nfqws2') || file_exists('/usr/bin/nfqws2'));
 define('ROOT_DIR', (file_exists('/opt/usr/bin/nfqws2') || file_exists('/opt/usr/bin/nfqws')) ? '/opt' : '');
 const CONF_FILE = ROOT_DIR . '/etc/nfqws_web.conf';
-const SCRIPT_NAME = ROOT_DIR ? (NFQWS2 ? 'S51nfqws2' : 'S51nfqws') : (NFQWS2 ? 'nfqws2-keenetic' : 'nfqws-keenetic');
 const CONF_DIR = NFQWS2 ? '/etc/nfqws2' : '/etc/nfqws';
 const LISTS_DIR = NFQWS2 ? '/etc/nfqws2/lists' : '/etc/nfqws';
 const LOGS_DIR = '/var/log';
 const LUA_DIR = '/etc/nfqws2/lua';
+
+// Обработка выбора скрипта запуска
+function nfqwsInitScript(): string
+{
+  if (ROOT_DIR) {
+    $names = NFQWS2 ? ['S51nfqws2', 'K51nfqws2'] : ['S51nfqws', 'K51nfqws'];
+    foreach ($names as $name) {
+      if (file_exists(ROOT_DIR . '/etc/init.d/' . $name)) {
+        return $name;
+      }
+    }
+    return $names[0];
+  }
+  return NFQWS2 ? 'nfqws2-keenetic' : 'nfqws-keenetic';
+}
+define('SCRIPT_NAME', nfqwsInitScript());
 
 function normalizeString(string $s): string
 {
